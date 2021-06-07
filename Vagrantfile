@@ -1,0 +1,42 @@
+$script = <<-SCRIPT
+#apt-get install nodejs npm -y
+sudo useradd -G sudo -m -s /bin/bash ansible 
+mkdir /home/ansible/.ssh || true
+cat > /home/ansible/.ssh/authorized_keys << EO\F
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDHoBRy6kZ4WDuDDRFjeG/tAONcvKkCoH22IHi4ZpuZDdC3cY/0svA9BWvTiNJXqrRR3SlGk61s+HbB5ruQdDPJyqUJDHwcQAvto1isEIHM5t/7JWx8vnB5SIO6AENF+xm37aZO3F/IJ/ATTRwJhKPEpgd+vFRq0+A7ww4iCtEHiqXLunJ1pNmyKI4oDMfMHrvxJAcQoaCLFuAr+1GxtxbLpFbIePrD2eC2YSFzF0ivpxZn7aa4ZLv4IP5qBv6gN59TiKmoX8jvcVo1IAVyZsbVBj4ArhNatXaOl0y5Xtfcds6IKu4WWMHFf8YE0EPWLmeliWFrFNNKPLgdIPZCgrw7JhCuhQiKi1aQLrQ4sCV1UyXtPeA5AWa7Qtpu5GJ99w3O5ck8Ry79p2kAe9zDCkzAp8ziy2HzFiPh3kn4kaHMmEgI800j9uxGqlfqlD5h5PDTP6jUSjQkriVOx3lMnyM+JKun4GCAl9XoGv3gwkyitj5I8z1kw+a+6HN6CjejkME= viktorshevchenko@MacBook-Air-Viktor.local
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9eobD+jlofc6ZInJhgHgQgIMdfCo4TG9DwqqL4uXW/g0XqBQMDRS04/qoLKVnOVAhrOemThM2ZUywCcTwWHdhZCb93/7NwrwI4hDiktkwVb+khXG8tD3GXlkI1K9PzCuwf9rwfMcXPy4WKBJHdwMsRejnXXwzXReF5qcy3jvM4E+Puf9tlZWUEmSfF9/I9Je+rUESd+d58E7n6HIOb/leZ/+a7no9rQnqrlofVR2bQ5ldVBcC0BhOI1a11XMnjo5AODfUzLNeNKuYNErnneCO6Igy2oi6A8nSHR380U0ITJkJH/8frYbqTCIV1+dTWxSRsTdVNiJ2PHNlauynn0Qv mrv@mrv-MS-7B86
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4OBbeswQ3aF4t2W9VdKEiciDYLBnOAcItVmTOrLQoHDkDYzxqY8KdQP8ZLXrEHf4KKWFj8CObbZS1gUBa5IefSr9oVD0hBDBSk+5BHZBi9pjKKXviYq33EPTYAN2qhsOgN346zoUCTnEIruLoLpfFbpJlLnSklqQR+XR1kiUv+s1tuPcy7N8pivN70NC8JotMhDw1QawEv9cHVEvrW+1KiYBrQmTTigxD9t+37W13h85ZParacr2P4JXnGVsCzZRD8E+z7Y6AiNNEnQdRWywwF0cpOxqUNvWDzKtUEUyUA0cghJr+4GgncXa2csynMqNoUs3i4Wo4aDgeTL8oNtgz ansible@mrv-MS-7B86
+EOF
+chown  ansible:ansible /home/ansible/.ssh
+chown  ansible:ansible /home/ansible/.ssh/authorized_keys
+chmod 644 /home/ansible/.ssh/authorized_keys
+chmod 700 /home/ansible/.ssh 
+echo "ansible:ansible" | sudo chpasswd
+echo 3 |  sudo update-alternatives --config editor
+chmod 770 /etc/sudoers
+#sed -i 's/ansible.*/ansible ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers || echo "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+sed -i '/ansible/d' /etc/sudoers
+echo "ansible ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+chmod 440 /etc/sudoers
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.provider "virtualbox"
+  config.vm.define "node1" do |prom|
+    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.251"
+    prom.vm.network "private_network", ip: "192.168.11.101"
+    prom.vm.provision "shell", inline: $script
+  end
+  config.vm.define "node2" do |prom|
+    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.252"
+    prom.vm.network "private_network", ip: "192.168.11.102"
+    prom.vm.provision "shell", inline: $script
+  end
+  config.vm.define "node3" do |prom|
+    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.253"
+    prom.vm.network "private_network", ip: "192.168.11.103"
+    prom.vm.provision "shell", inline: $script
+  end
+end
+

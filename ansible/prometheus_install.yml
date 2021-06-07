@@ -1,0 +1,8 @@
+---
+- name: Configure servers
+  hosts: all
+  become: true
+
+  #  tasks:
+  #  - name: Create service node_exporter
+  #    copy:
