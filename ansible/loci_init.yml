@@ -3,6 +3,7 @@
   hosts: all
   serial: 2
   roles:
+    - hostname_from_inventory
     - linux_os_update
     - prometheus_node_exporter_install
   # tags:

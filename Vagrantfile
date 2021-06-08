@@ -23,20 +23,22 @@ SCRIPT
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
   config.vm.provider "virtualbox"
-  config.vm.define "node1" do |prom|
-    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.251"
-    prom.vm.network "private_network", ip: "192.168.11.101"
-    prom.vm.provision "shell", inline: $script
+  config.vm.define "node1" do |n|
+    n.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.251"
+    n.vm.network "private_network", ip: "192.168.11.101"
+    n.vm.hostname = "node1"
+    n.vm.provision "shell", inline: $script
   end
-  config.vm.define "node2" do |prom|
-    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.252"
-    prom.vm.network "private_network", ip: "192.168.11.102"
-    prom.vm.provision "shell", inline: $script
+  config.vm.define "node2" do |n|
+    n.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.252"
+    n.vm.network "private_network", ip: "192.168.11.102"
+    n.vm.provision "shell", inline: $script
+    n.vm.hostname = "node2"
   end
-  config.vm.define "node3" do |prom|
-    config.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.253"
-    prom.vm.network "private_network", ip: "192.168.11.103"
-    prom.vm.provision "shell", inline: $script
+  config.vm.define "node3" do |n|
+    n.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.253"
+    n.vm.network "private_network", ip: "192.168.11.103"
+    n.vm.provision "shell", inline: $script
+    n.vm.hostname = "node3"
   end
-end
 
