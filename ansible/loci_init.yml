@@ -1,9 +1,10 @@
 ---
 - name:  Install prometheus node exporter
-  hosts: all
+  hosts: mv
   serial: 2
   roles:
-    - hostname_from_inventory
+    # - hostname_from_inventory
+    - docker_install
     - linux_os_update
     - prometheus_node_exporter_install
   # tags:
