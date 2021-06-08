@@ -1,0 +1,11 @@
+---
+- name:  Install prometheus node exporter
+  hosts: all
+  serial: 2
+  roles:
+    - linux_os_update
+    - prometheus_node_exporter_install
+  # tags:
+  #   - prometheus
+
+

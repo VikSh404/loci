@@ -3,7 +3,7 @@ ansible_user=ansible
 #ansible_password=ansible
 
 [hosts]
-localhost subnet=192.168.88.0/24 
+192.168.88.250 ansible_user=mrv subnet=192.168.88.0/24 
 192.168.88.251 hostname=node1 ansible_python_interpreter=/usr/bin/python3
 192.168.88.252 hostname=node2 ansible_python_interpreter=/usr/bin/python3
 192.168.88.253 hostname=node3 ansible_python_interpreter=/usr/bin/python3
