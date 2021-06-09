@@ -53,7 +53,6 @@
     - daemon.json
   notify: Docker restart
 
-
 - name: Add user to docker group
   user:
      name: "{{ ansible_user }}"

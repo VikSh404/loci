@@ -25,6 +25,7 @@
         - kubelet 
         - kubeadm 
         - kubectl
+      notify: Restart kubelet
 
     - name: Prevent k8s from being upgraded
       dpkg_selections:
@@ -37,3 +38,19 @@
       when:
         - k8s_install_hold is defined 
         - k8s_install_hold == true
+      notify: Restart kubelet
+
+    - name: Remove swapfile from /etc/fstab
+      mount:
+        name: "{{ item }}"
+        fstype: swap
+        state: absent
+      with_items:
+        - swap
+        - none
+      notify: Restart kubelet
+
+    - name: Disable swap
+      command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+      notify: Restart kubelet
