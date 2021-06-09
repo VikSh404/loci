@@ -3,4 +3,7 @@
 ansible/*.logs
 ansible/*.log
 ansible/*.retry
-.vagrant
+*/.vagrant
+*.vagrant
+*test*
+*/*test*

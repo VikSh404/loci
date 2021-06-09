@@ -1,0 +1,39 @@
+---
+- name: Install k8s
+  block:
+    - name: Add k8s's official GPG key
+      apt_key:
+        id: 48419E688DD52AC0
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+    - name: Verify that we have the key with the fingerprint
+      apt_key:
+        id: 48419E688DD52AC0
+        state: present
+
+    - name: Set up the stable k8s repository
+      apt_repository:
+        repo: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+        filename: k8s
+        update_cache: yes
+
+    - name: Install k8s's packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      loop:
+        - kubelet 
+        - kubeadm 
+        - kubectl
+
+    - name: Prevent k8s from being upgraded
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet 
+        - kubeadm 
+        - kubectl
+      when:
+        - k8s_install_hold is defined 
+        - k8s_install_hold == true

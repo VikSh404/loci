@@ -1,13 +1,37 @@
 ---
-- name:  Install prometheus node exporter
+- name:  Update OS
   hosts: mv
-  serial: 2
+  serial: 3
   roles:
-    # - hostname_from_inventory
-    - docker_install
     - linux_os_update
+  tags:
+    - update
+
+- name:  Install a prometheus node exporter
+  hosts: mv
+  serial: 3
+  roles:
     - prometheus_node_exporter_install
-  # tags:
-  #   - prometheus
+  tags:
+    - prometheus
+
+- name:  Install a docker
+  hosts: mv
+  serial: 3
+  vars:
+    docker_install_hold: true
+  roles:
+    - docker_install
+  tags:
+    - docker
 
 
+- name:  Install a k8s
+  hosts: mv
+  serial: 3
+  vars:
+    k8s_install_hold: true
+  roles:
+    - k8s_install
+  tags:
+    - k8s
