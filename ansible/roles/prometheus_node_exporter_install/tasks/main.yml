@@ -1,6 +1,6 @@
 ---
 - name: Add the user 'node_exporter'
-  ansible.builtin.user:
+  user:
     name: node_exporter
     shell: /bin/false
     create_home: no
