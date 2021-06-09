@@ -42,6 +42,18 @@
     - containerd.io
   notify: Docker restart
 
+- name: Copy daemon.json configure file
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/docker/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - daemon.json
+  notify: Docker restart
+
+
 - name: Add user to docker group
   user:
      name: "{{ ansible_user }}"

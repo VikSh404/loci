@@ -38,11 +38,19 @@ Vagrant.configure("2") do |config|
     n.vm.network "private_network", ip: "192.168.11.102"
     n.vm.provision "shell", inline: $script
     n.vm.hostname = "node2"
+    n.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
   end
   config.vm.define "node3" do |n|
     n.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.253"
     n.vm.network "private_network", ip: "192.168.11.103"
     n.vm.provision "shell", inline: $script
     n.vm.hostname = "node3"
+    n.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "1024"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
   end
 end
