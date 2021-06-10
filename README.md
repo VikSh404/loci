@@ -4,8 +4,8 @@
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=54%>
 </div>
 
-0) Preparation:
-Change IP addresses, an interface name, and open keys in vagrant project and inventory. 
+0) Preparation.<br/>Change IP addresses, an interface name, and open keys in vagrant project and inventory.
+
 ```bash
 # cat ansible/inventory
 # cat vagrant/Vagrant
@@ -15,12 +15,18 @@ Change IP addresses, an interface name, and open keys in vagrant project and inv
 ```bash
 cd workdir
 vagrant up
+
+# Useful for quick start:
+# vagrant destroy --force
+# vagrant status
 ```
 2) Run ansible-playbooks:
 ```bash
 cd workdir/ansible
 ansible-playbook loci.yml
-# Exclude unused modules
+
+# Exclude unused modules:
 # ansible-playbook --skip-tags 'k8s_prepare' --list-tasks  --tags 'join_nodes' loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
 ```
+
