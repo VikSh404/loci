@@ -1,5 +1,4 @@
 # Loci project
-**This is hobby open project**
 
 **Tips for cli running for display ansible variables:**
 ```bash
