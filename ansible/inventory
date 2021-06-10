@@ -1,11 +1,24 @@
 [all:vars]
 ansible_user=ansible
-#ansible_password=ansible
 
 [hypervisor]
 192.168.88.250 hostname=server ansible_user=mrv subnet=192.168.88.0/24 
 
 [mv]
-192.168.88.251 hostname=node1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.252 hostname=node2 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.253 hostname=node3 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.11 hostname=master-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.14 hostname=node-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.15 hostname=node-2 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.16 hostname=node-3 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.17 hostname=node-4 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+
+
+[masters]
+192.168.88.11 hostname=master-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+
+[nodes]
+192.168.88.14 hostname=node-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.15 hostname=node-2 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.16 hostname=node-3 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.17 hostname=node-4 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+
+
