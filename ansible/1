@@ -1,0 +1,1433 @@
+
+PLAY [Nodes preparation] *******************************************************
+
+PLAY [Kube init cluster] *******************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [192.168.88.11]
+
+TASK [k8s_init : collect facts about system services] **************************
+ok: [192.168.88.11]
+
+TASK [k8s_init : Debug] ********************************************************
+ok: [192.168.88.11] => {
+    "msg": {
+        "ansible_facts": {
+            "services": {
+                "accounts-daemon.service": {
+                    "name": "accounts-daemon.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "acpid": {
+                    "name": "acpid",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "acpid.service": {
+                    "name": "acpid.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "disabled"
+                },
+                "apparmor": {
+                    "name": "apparmor",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "apparmor.service": {
+                    "name": "apparmor.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "apport": {
+                    "name": "apport",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "apport-autoreport.service": {
+                    "name": "apport-autoreport.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "apport-forward@.service": {
+                    "name": "apport-forward@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "apport.service": {
+                    "name": "apport.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "generated"
+                },
+                "apt-daily-upgrade.service": {
+                    "name": "apt-daily-upgrade.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "apt-daily.service": {
+                    "name": "apt-daily.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "atd": {
+                    "name": "atd",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "atd.service": {
+                    "name": "atd.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "autovt@.service": {
+                    "name": "autovt@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "enabled"
+                },
+                "blk-availability.service": {
+                    "name": "blk-availability.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "bootlogd.service": {
+                    "name": "bootlogd.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "bootlogs.service": {
+                    "name": "bootlogs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "bootmisc.service": {
+                    "name": "bootmisc.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "checkfs.service": {
+                    "name": "checkfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "checkroot-bootclean.service": {
+                    "name": "checkroot-bootclean.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "checkroot.service": {
+                    "name": "checkroot.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "cloud-config.service": {
+                    "name": "cloud-config.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "cloud-final.service": {
+                    "name": "cloud-final.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "cloud-init-local.service": {
+                    "name": "cloud-init-local.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "cloud-init.service": {
+                    "name": "cloud-init.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "console-getty.service": {
+                    "name": "console-getty.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "disabled"
+                },
+                "console-setup.service": {
+                    "name": "console-setup.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "console-setup.sh": {
+                    "name": "console-setup.sh",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "container-getty@.service": {
+                    "name": "container-getty@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "containerd.service": {
+                    "name": "containerd.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "cron": {
+                    "name": "cron",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "cron.service": {
+                    "name": "cron.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "cryptdisks": {
+                    "name": "cryptdisks",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "cryptdisks-early": {
+                    "name": "cryptdisks-early",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "cryptdisks-early.service": {
+                    "name": "cryptdisks-early.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "cryptdisks.service": {
+                    "name": "cryptdisks.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "dbus": {
+                    "name": "dbus",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "dbus-org.freedesktop.hostname1.service": {
+                    "name": "dbus-org.freedesktop.hostname1.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "dbus-org.freedesktop.locale1.service": {
+                    "name": "dbus-org.freedesktop.locale1.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "dbus-org.freedesktop.login1.service": {
+                    "name": "dbus-org.freedesktop.login1.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "dbus-org.freedesktop.resolve1.service": {
+                    "name": "dbus-org.freedesktop.resolve1.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "enabled"
+                },
+                "dbus-org.freedesktop.timedate1.service": {
+                    "name": "dbus-org.freedesktop.timedate1.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "dbus.service": {
+                    "name": "dbus.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "debug-shell.service": {
+                    "name": "debug-shell.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "disabled"
+                },
+                "dm-event.service": {
+                    "name": "dm-event.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "docker": {
+                    "name": "docker",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "docker.service": {
+                    "name": "docker.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "ebtables": {
+                    "name": "ebtables",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "ebtables.service": {
+                    "name": "ebtables.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "emergency.service": {
+                    "name": "emergency.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "friendly-recovery.service": {
+                    "name": "friendly-recovery.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "fstrim.service": {
+                    "name": "fstrim.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "fuse.service": {
+                    "name": "fuse.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "getty-static.service": {
+                    "name": "getty-static.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "getty@.service": {
+                    "name": "getty@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "enabled"
+                },
+                "getty@tty1.service": {
+                    "name": "getty@tty1.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "unknown"
+                },
+                "grub-common": {
+                    "name": "grub-common",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "grub-common.service": {
+                    "name": "grub-common.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "generated"
+                },
+                "halt.service": {
+                    "name": "halt.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "hostname.service": {
+                    "name": "hostname.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "hwclock.service": {
+                    "name": "hwclock.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "hwclock.sh": {
+                    "name": "hwclock.sh",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "initrd-cleanup.service": {
+                    "name": "initrd-cleanup.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "initrd-parse-etc.service": {
+                    "name": "initrd-parse-etc.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "initrd-switch-root.service": {
+                    "name": "initrd-switch-root.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "initrd-udevadm-cleanup-db.service": {
+                    "name": "initrd-udevadm-cleanup-db.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "irqbalance": {
+                    "name": "irqbalance",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "irqbalance.service": {
+                    "name": "irqbalance.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "iscsi.service": {
+                    "name": "iscsi.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "enabled"
+                },
+                "iscsid": {
+                    "name": "iscsid",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "iscsid.service": {
+                    "name": "iscsid.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "disabled"
+                },
+                "keyboard-setup.service": {
+                    "name": "keyboard-setup.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "keyboard-setup.sh": {
+                    "name": "keyboard-setup.sh",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "killprocs.service": {
+                    "name": "killprocs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "kmod": {
+                    "name": "kmod",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "kmod-static-nodes.service": {
+                    "name": "kmod-static-nodes.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "kmod.service": {
+                    "name": "kmod.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "kubelet.service": {
+                    "name": "kubelet.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "lvm2": {
+                    "name": "lvm2",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "lvm2-lvmetad": {
+                    "name": "lvm2-lvmetad",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "lvm2-lvmetad.service": {
+                    "name": "lvm2-lvmetad.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "lvm2-lvmpolld": {
+                    "name": "lvm2-lvmpolld",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "lvm2-lvmpolld.service": {
+                    "name": "lvm2-lvmpolld.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "lvm2-monitor.service": {
+                    "name": "lvm2-monitor.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "lvm2-pvscan@.service": {
+                    "name": "lvm2-pvscan@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "lvm2.service": {
+                    "name": "lvm2.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "lxcfs": {
+                    "name": "lxcfs",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "lxcfs.service": {
+                    "name": "lxcfs.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "lxd": {
+                    "name": "lxd",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "lxd-containers.service": {
+                    "name": "lxd-containers.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "lxd.service": {
+                    "name": "lxd.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "indirect"
+                },
+                "mdadm": {
+                    "name": "mdadm",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "mdadm-grow-continue@.service": {
+                    "name": "mdadm-grow-continue@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "mdadm-last-resort@.service": {
+                    "name": "mdadm-last-resort@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "mdadm-shutdown.service": {
+                    "name": "mdadm-shutdown.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "disabled"
+                },
+                "mdadm-waitidle": {
+                    "name": "mdadm-waitidle",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "mdadm-waitidle.service": {
+                    "name": "mdadm-waitidle.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mdadm.service": {
+                    "name": "mdadm.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mdmon@.service": {
+                    "name": "mdmon@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "mdmonitor.service": {
+                    "name": "mdmonitor.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "module-init-tools.service": {
+                    "name": "module-init-tools.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "motd-news.service": {
+                    "name": "motd-news.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "motd.service": {
+                    "name": "motd.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountall-bootclean.service": {
+                    "name": "mountall-bootclean.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountall.service": {
+                    "name": "mountall.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountdevsubfs.service": {
+                    "name": "mountdevsubfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountkernfs.service": {
+                    "name": "mountkernfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountnfs-bootclean.service": {
+                    "name": "mountnfs-bootclean.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "mountnfs.service": {
+                    "name": "mountnfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "networkd-dispatcher.service": {
+                    "name": "networkd-dispatcher.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "node_exporter.service": {
+                    "name": "node_exporter.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "ondemand.service": {
+                    "name": "ondemand.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "open-iscsi": {
+                    "name": "open-iscsi",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "open-iscsi.service": {
+                    "name": "open-iscsi.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "open-vm-tools": {
+                    "name": "open-vm-tools",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "open-vm-tools.service": {
+                    "name": "open-vm-tools.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "plymouth": {
+                    "name": "plymouth",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "plymouth-halt.service": {
+                    "name": "plymouth-halt.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth-kexec.service": {
+                    "name": "plymouth-kexec.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth-log": {
+                    "name": "plymouth-log",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "plymouth-log.service": {
+                    "name": "plymouth-log.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth-poweroff.service": {
+                    "name": "plymouth-poweroff.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth-quit-wait.service": {
+                    "name": "plymouth-quit-wait.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "plymouth-quit.service": {
+                    "name": "plymouth-quit.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "plymouth-read-write.service": {
+                    "name": "plymouth-read-write.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "plymouth-reboot.service": {
+                    "name": "plymouth-reboot.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth-start.service": {
+                    "name": "plymouth-start.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "plymouth-switch-root.service": {
+                    "name": "plymouth-switch-root.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "plymouth.service": {
+                    "name": "plymouth.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "polkit.service": {
+                    "name": "polkit.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "pollinate.service": {
+                    "name": "pollinate.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "procps": {
+                    "name": "procps",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "procps.service": {
+                    "name": "procps.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "quotaon.service": {
+                    "name": "quotaon.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "rc-local.service": {
+                    "name": "rc-local.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "rc.local.service": {
+                    "name": "rc.local.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "rc.service": {
+                    "name": "rc.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "rcS.service": {
+                    "name": "rcS.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "reboot.service": {
+                    "name": "reboot.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "rescue.service": {
+                    "name": "rescue.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "rmnologin.service": {
+                    "name": "rmnologin.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "rsync": {
+                    "name": "rsync",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "rsync.service": {
+                    "name": "rsync.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "rsyslog": {
+                    "name": "rsyslog",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "rsyslog.service": {
+                    "name": "rsyslog.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "screen-cleanup": {
+                    "name": "screen-cleanup",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "screen-cleanup.service": {
+                    "name": "screen-cleanup.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "sendsigs.service": {
+                    "name": "sendsigs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "serial-getty@.service": {
+                    "name": "serial-getty@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "indirect"
+                },
+                "serial-getty@ttyS0.service": {
+                    "name": "serial-getty@ttyS0.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "unknown"
+                },
+                "setvtrgb.service": {
+                    "name": "setvtrgb.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "single.service": {
+                    "name": "single.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "snapd.apparmor.service": {
+                    "name": "snapd.apparmor.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.autoimport.service": {
+                    "name": "snapd.autoimport.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.core-fixup.service": {
+                    "name": "snapd.core-fixup.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.failure.service": {
+                    "name": "snapd.failure.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "snapd.recovery-chooser-trigger.service": {
+                    "name": "snapd.recovery-chooser-trigger.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.seeded.service": {
+                    "name": "snapd.seeded.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.service": {
+                    "name": "snapd.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "snapd.snap-repair.service": {
+                    "name": "snapd.snap-repair.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "snapd.system-shutdown.service": {
+                    "name": "snapd.system-shutdown.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "enabled"
+                },
+                "ssh": {
+                    "name": "ssh",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "ssh.service": {
+                    "name": "ssh.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "ssh@.service": {
+                    "name": "ssh@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "sshd.service": {
+                    "name": "sshd.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "enabled"
+                },
+                "stop-bootlogd-single.service": {
+                    "name": "stop-bootlogd-single.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "stop-bootlogd.service": {
+                    "name": "stop-bootlogd.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "sudo.service": {
+                    "name": "sudo.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "syslog.service": {
+                    "name": "syslog.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "enabled"
+                },
+                "system-update-cleanup.service": {
+                    "name": "system-update-cleanup.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-ask-password-console.service": {
+                    "name": "systemd-ask-password-console.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-ask-password-plymouth.service": {
+                    "name": "systemd-ask-password-plymouth.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-ask-password-wall.service": {
+                    "name": "systemd-ask-password-wall.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-backlight@.service": {
+                    "name": "systemd-backlight@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "systemd-binfmt.service": {
+                    "name": "systemd-binfmt.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-exit.service": {
+                    "name": "systemd-exit.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-fsck-root.service": {
+                    "name": "systemd-fsck-root.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled-runtime"
+                },
+                "systemd-fsck@.service": {
+                    "name": "systemd-fsck@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "systemd-fsckd.service": {
+                    "name": "systemd-fsckd.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-halt.service": {
+                    "name": "systemd-halt.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-hibernate-resume@.service": {
+                    "name": "systemd-hibernate-resume@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "systemd-hibernate.service": {
+                    "name": "systemd-hibernate.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-hostnamed.service": {
+                    "name": "systemd-hostnamed.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-hwdb-update.service": {
+                    "name": "systemd-hwdb-update.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-hybrid-sleep.service": {
+                    "name": "systemd-hybrid-sleep.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-initctl.service": {
+                    "name": "systemd-initctl.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-journal-flush.service": {
+                    "name": "systemd-journal-flush.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-journald.service": {
+                    "name": "systemd-journald.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "systemd-kexec.service": {
+                    "name": "systemd-kexec.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-localed.service": {
+                    "name": "systemd-localed.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-logind.service": {
+                    "name": "systemd-logind.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "systemd-machine-id-commit.service": {
+                    "name": "systemd-machine-id-commit.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-modules-load.service": {
+                    "name": "systemd-modules-load.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-networkd-wait-online.service": {
+                    "name": "systemd-networkd-wait-online.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "systemd-networkd.service": {
+                    "name": "systemd-networkd.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "systemd-poweroff.service": {
+                    "name": "systemd-poweroff.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-quotacheck.service": {
+                    "name": "systemd-quotacheck.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-random-seed.service": {
+                    "name": "systemd-random-seed.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-reboot.service": {
+                    "name": "systemd-reboot.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-remount-fs.service": {
+                    "name": "systemd-remount-fs.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-resolved.service": {
+                    "name": "systemd-resolved.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "systemd-rfkill.service": {
+                    "name": "systemd-rfkill.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-suspend-then-hibernate.service": {
+                    "name": "systemd-suspend-then-hibernate.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-suspend.service": {
+                    "name": "systemd-suspend.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-sysctl.service": {
+                    "name": "systemd-sysctl.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-timedated.service": {
+                    "name": "systemd-timedated.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-timesyncd.service": {
+                    "name": "systemd-timesyncd.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "systemd-tmpfiles-clean.service": {
+                    "name": "systemd-tmpfiles-clean.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-tmpfiles-setup-dev.service": {
+                    "name": "systemd-tmpfiles-setup-dev.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-tmpfiles-setup.service": {
+                    "name": "systemd-tmpfiles-setup.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-udev-settle.service": {
+                    "name": "systemd-udev-settle.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "systemd-udev-trigger.service": {
+                    "name": "systemd-udev-trigger.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-udevd.service": {
+                    "name": "systemd-udevd.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "static"
+                },
+                "systemd-update-utmp-runlevel.service": {
+                    "name": "systemd-update-utmp-runlevel.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-update-utmp.service": {
+                    "name": "systemd-update-utmp.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-user-sessions.service": {
+                    "name": "systemd-user-sessions.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "systemd-volatile-root.service": {
+                    "name": "systemd-volatile-root.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "static"
+                },
+                "ua-messaging.service": {
+                    "name": "ua-messaging.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "ua-reboot-cmds.service": {
+                    "name": "ua-reboot-cmds.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "udev": {
+                    "name": "udev",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "udev.service": {
+                    "name": "udev.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "ufw": {
+                    "name": "ufw",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "ufw.service": {
+                    "name": "ufw.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "umountfs.service": {
+                    "name": "umountfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "umountnfs.service": {
+                    "name": "umountnfs.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "umountroot.service": {
+                    "name": "umountroot.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                },
+                "unattended-upgrades": {
+                    "name": "unattended-upgrades",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "unattended-upgrades.service": {
+                    "name": "unattended-upgrades.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "urandom.service": {
+                    "name": "urandom.service",
+                    "source": "systemd",
+                    "state": "active",
+                    "status": "static"
+                },
+                "ureadahead-stop.service": {
+                    "name": "ureadahead-stop.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "static"
+                },
+                "ureadahead.service": {
+                    "name": "ureadahead.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "user@.service": {
+                    "name": "user@.service",
+                    "source": "systemd",
+                    "state": "unknown",
+                    "status": "static"
+                },
+                "user@1002.service": {
+                    "name": "user@1002.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "unknown"
+                },
+                "uuidd": {
+                    "name": "uuidd",
+                    "source": "sysv",
+                    "state": "stopped"
+                },
+                "uuidd.service": {
+                    "name": "uuidd.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "indirect"
+                },
+                "vgauth.service": {
+                    "name": "vgauth.service",
+                    "source": "systemd",
+                    "state": "stopped",
+                    "status": "enabled"
+                },
+                "virtualbox-guest-utils": {
+                    "name": "virtualbox-guest-utils",
+                    "source": "sysv",
+                    "state": "running"
+                },
+                "virtualbox-guest-utils.service": {
+                    "name": "virtualbox-guest-utils.service",
+                    "source": "systemd",
+                    "state": "running",
+                    "status": "enabled"
+                },
+                "vmtoolsd.service": {
+                    "name": "vmtoolsd.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "enabled"
+                },
+                "x11-common.service": {
+                    "name": "x11-common.service",
+                    "source": "systemd",
+                    "state": "inactive",
+                    "status": "masked"
+                }
+            }
+        },
+        "changed": false,
+        "failed": false
+    }
+}
+
+TASK [k8s_init : Initialize the Kubernetes cluster using kubeadm] **************
+fatal: [192.168.88.11]: FAILED! => {"changed": true, "cmd": ["sudo", "kubeadm", "init", "--apiserver-advertise-address=192.168.88.11", "--apiserver-cert-extra-sans=192.168.88.11", "--pod-network-cidr=10.244.0.0/16"], "delta": "0:00:01.106882", "end": "2021-06-10 10:07:52.563704", "msg": "non-zero return code", "rc": 1, "start": "2021-06-10 10:07:51.456822", "stderr": "error execution phase preflight: [preflight] Some fatal errors occurred:\n\t[ERROR Port-6443]: Port 6443 is in use\n\t[ERROR Port-10259]: Port 10259 is in use\n\t[ERROR Port-10257]: Port 10257 is in use\n\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists\n\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists\n\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists\n\t[ERROR FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists\n\t[ERROR Port-10250]: Port 10250 is in use\n\t[ERROR Port-2379]: Port 2379 is in use\n\t[ERROR Port-2380]: Port 2380 is in use\n\t[ERROR DirAvailable--var-lib-etcd]: /var/lib/etcd is not empty\n[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`\nTo see the stack trace of this error execute with --v=5 or higher", "stderr_lines": ["error execution phase preflight: [preflight] Some fatal errors occurred:", "\t[ERROR Port-6443]: Port 6443 is in use", "\t[ERROR Port-10259]: Port 10259 is in use", "\t[ERROR Port-10257]: Port 10257 is in use", "\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml]: /etc/kubernetes/manifests/kube-apiserver.yaml already exists", "\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml]: /etc/kubernetes/manifests/kube-controller-manager.yaml already exists", "\t[ERROR FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml]: /etc/kubernetes/manifests/kube-scheduler.yaml already exists", "\t[ERROR FileAvailable--etc-kubernetes-manifests-etcd.yaml]: /etc/kubernetes/manifests/etcd.yaml already exists", "\t[ERROR Port-10250]: Port 10250 is in use", "\t[ERROR Port-2379]: Port 2379 is in use", "\t[ERROR Port-2380]: Port 2380 is in use", "\t[ERROR DirAvailable--var-lib-etcd]: /var/lib/etcd is not empty", "[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`", "To see the stack trace of this error execute with --v=5 or higher"], "stdout": "[init] Using Kubernetes version: v1.21.1\n[preflight] Running pre-flight checks", "stdout_lines": ["[init] Using Kubernetes version: v1.21.1", "[preflight] Running pre-flight checks"]}
+
+NO MORE HOSTS LEFT *************************************************************
+
+PLAY RECAP *********************************************************************
+192.168.88.11              : ok=3    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

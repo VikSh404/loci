@@ -1,0 +1,30 @@
+---
+- name:  Nodes preparation
+  hosts: mv
+  serial: 5
+  vars:
+    docker_install_hold: true
+    k8s_install_hold: true
+  roles:
+    - linux_os_update
+    - prometheus_node_exporter_install
+    - docker_install
+    - k8s_install
+  tags:
+    - k8s_prepare
+
+- name: Kube init cluster
+  hosts: masters
+  serial: 5
+  roles:
+    - k8s_init
+  tags:
+    - control_plane_init
+
+- name: Kube init cluster
+  hosts: nodes
+  serial: 5
+  roles:
+    - k8s_join_node
+  tags:
+    - join_nodes

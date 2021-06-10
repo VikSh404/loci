@@ -8,4 +8,5 @@ ansible/*.retry
 *test*
 */*test*
 .DS_Store
-*/.DS_Store
+*/.DS_Stores
+*join-command.sh

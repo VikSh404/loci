@@ -1,0 +1,33 @@
+---
+- name: collect facts about system services
+  service_facts:
+  register: services_state
+
+# - name: Debug
+#   debug:
+#     msg: "{{ ansible_facts.services['kubelet.service']['state'] }}"
+
+- name: Initialize the Kubernetes cluster using kubeadm
+  command: sudo kubeadm init --apiserver-advertise-address="{{ ip }}" --apiserver-cert-extra-sans="{{ ip }}" --pod-network-cidr=10.244.0.0/16
+  run_once: true
+  when: ansible_facts.services['kubelet.service']['state'] != 'running'
+
+- name: Setup kubeconfig for vagrant user
+  command: "{{ item }}"
+  with_items:
+    - mkdir -p /home/ansible/.kube || true
+    - cp -f /etc/kubernetes/admin.conf /home/ansible/.kube/config
+    - chown ansible:ansible /home/ansible/.kube/config
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  debug: 
+    msg: "{{ join_command.stdout_lines }}" 
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command.sh"
+  become: no
+
