@@ -3,10 +3,6 @@
   service_facts:
   register: services_state
 
-# - name: Debug
-#   debug:
-#     msg: "{{ ansible_facts.services['kubelet.service']['state'] }}"
-
 - name: Initialize the Kubernetes cluster using kubeadm
   command: sudo kubeadm init --apiserver-advertise-address="{{ ip }}" --apiserver-cert-extra-sans="{{ ip }}" --pod-network-cidr=10.244.0.0/16
   run_once: true

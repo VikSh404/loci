@@ -54,3 +54,8 @@
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
       notify: Restart kubelet
+
+    - name: Kubelet enabled
+      systemd:
+        name: kubelet
+        enabled: yes
