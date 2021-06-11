@@ -1,0 +1,4 @@
+- name: Add user to docker group
+  user:
+     name: test
+     group: test

@@ -1,5 +1,5 @@
 $script = <<-SCRIPT
-#apt-get install nodejs npm -y
+echo execute script
 sudo useradd -G sudo -m -s /bin/bash ansible 
 mkdir /home/ansible/.ssh || true
 cat > /home/ansible/.ssh/authorized_keys << EO\F
@@ -41,7 +41,10 @@ Vagrant.configure("2") do |config|
       node.vm.network "public_network", bridge: "enp24s0", ip: "192.168.88.#{13 + i}"
       node.vm.network "private_network", ip: "192.168.11.#{13 + i}"
       node.vm.hostname = "node-#{i}"
-      node.vm.provision "shell", inline: $script        
+      node.vm.provision "shell", inline: $script
+      node.vm.provision "ansible" do |ansible|
+        ansible.playbook = "../ansible/vagrant-provision-playbooks/node-preparation.yml"
+      end
       node.vm.provider "virtualbox" do |vb|
         vb.customize ["modifyvm", :id, "--memory", "1024"]
         vb.customize ["modifyvm", :id, "--cpus", "2"]
