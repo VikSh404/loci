@@ -4,7 +4,7 @@ ansible_user=ansible
 [hypervisor]
 192.168.88.250 hostname=server ansible_user=mrv subnet=192.168.88.0/24 
 
-[mv]
+[vm]
 192.168.88.11 hostname=master-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
 192.168.88.14 hostname=node-1   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
 192.168.88.15 hostname=node-2   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 

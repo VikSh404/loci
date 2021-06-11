@@ -1,0 +1,19 @@
+- name: Add the user {{ user_name }} with a bash shell {{ user_shell }} and home dir {{ user_home }}, appending the groups {{ user_groups }} to the user's groups
+  user:
+    name: "{{ user_name }}"
+    groups: "{{ user_groups }}"
+    shell: "{{ user_shell }}"
+    home: "{{ user_home }}"
+    append: yes
+
+- name: Add {{ user_name }} user to sudoers without password
+  copy:
+    dest: "/etc/sudoers.d/{{ user_name }}"
+    content: "{{ user_name }}  ALL=(ALL)  NOPASSWD: ALL"
+  when: use_sudo == true 
+
+- name: Deploy SSH Key
+  authorized_key:
+    user: "{{ user_name }}"
+    key: "{{ lookup('file', '{{ public_key }}') }}"
+    state: present

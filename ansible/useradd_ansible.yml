@@ -1,0 +1,6 @@
+- hosts: vm
+  become: true
+  vars_files:
+    - roles/linux_os_useradd/vars/ansible.yml
+  roles:
+    - linux_os_useradd
