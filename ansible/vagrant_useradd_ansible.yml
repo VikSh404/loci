@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: "{{ hosts }}"
   become: true
   vars:
     user_name: 'ansible'
