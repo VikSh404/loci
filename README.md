@@ -4,14 +4,14 @@
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=54%>
 </div>
 
-0) Preparation.<br/>Change IP addresses, an interface name, and open keys in vagrant project and inventory.
+## Preparation.<br/>Change IP addresses, an interface name, and open keys in vagrant project and inventory.
 
 ```bash
 # cat ansible/inventory
 # cat vagrant/Vagrant
 ```
 
-1) Create new infrastructure:
+## Create new infrastructure:
 ```bash
 cd workdir
 vagrant up
@@ -20,7 +20,7 @@ vagrant up
 # vagrant destroy --force
 # vagrant status
 ```
-2) Run ansible-playbooks:
+## Run ansible-playbooks:
 ```bash
 cd workdir/ansible
 ansible-playbook loci.yml
