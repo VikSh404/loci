@@ -5,11 +5,12 @@
 </div>
 
 ## Preparation.
-Change IP addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
+Change IP-addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
 
 ```bash
-# cat ansible/inventory
-# cat vagrant/Vagrant
+vim ansible/inventory # for IPs
+vim vagrant/Vagrant # for IPs ans interfaces name
+vim ansible/roles/linux_os_useradd/files/ansible.pub # for keys
 ```
 
 ## Create new infrastructure:
