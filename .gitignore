@@ -10,3 +10,4 @@ ansible/*.retry
 .DS_Store
 */.DS_Stores
 *join-command.sh
+*join-command
