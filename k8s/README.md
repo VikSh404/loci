@@ -6,7 +6,7 @@
 
 ## Tips.
 
-Simplest example deploy via pipe
+custom-columns
 ```bash
 ansible@master-1:~$ kubectl get nodes -o=custom-columns=NAME:.metadata.name,IP:.status.addresses[0].address
 NAME       IP
@@ -17,6 +17,7 @@ node-3     192.168.88.16
 node-4     192.168.88.17
 ```
 
+Simplest example deploy via pipe
 ```bash
 cat << EOF | kubectl create -f -
 apiVersion: v1
