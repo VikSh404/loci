@@ -5,7 +5,7 @@
 </div>
 
 ## Preparation.
-Change IP addresses, an interface name, and open keys in vagrant project and inventory.
+Change IP addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
 
 ```bash
 # cat ansible/inventory
@@ -17,6 +17,7 @@ Change IP addresses, an interface name, and open keys in vagrant project and inv
 cd workdir
 vagrant up
 
+# Tips:
 # Useful for quick start:
 # vagrant destroy --force
 # vagrant status
@@ -26,6 +27,7 @@ vagrant up
 cd workdir/ansible
 ansible-playbook loci.yml
 
+# Tips:
 # Exclude unused modules:
 # ansible-playbook --skip-tags 'k8s_prepare' --list-tasks  --tags 'join_nodes' loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
