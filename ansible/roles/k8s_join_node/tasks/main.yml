@@ -1,7 +1,7 @@
 ---
 - name: collect facts about system services
   service_facts:
-  register: services_state
+#  register: services_state
   
 - name: Copy the join command to server location
   copy: src=join-command dest=/tmp/join-command.sh mode=0770
