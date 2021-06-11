@@ -1,7 +1,7 @@
 # Loci project
 **Attempt to create DevOps's "Method of loci"**
 <div>
-<img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=64%>
+<img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=54%>
 </div>
 
 ## Preparation.
