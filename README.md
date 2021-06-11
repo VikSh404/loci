@@ -4,7 +4,8 @@
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=54%>
 </div>
 
-## Preparation.<br/>Change IP addresses, an interface name, and open keys in vagrant project and inventory.
+## Preparation.
+Change IP addresses, an interface name, and open keys in vagrant project and inventory.
 
 ```bash
 # cat ansible/inventory
