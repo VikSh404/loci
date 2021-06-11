@@ -1,6 +1,6 @@
 ---
 - name:  Nodes preparation
-  hosts: mv
+  hosts: vm
   serial: 5
   vars:
     docker_install_hold: true
@@ -10,6 +10,7 @@
     - prometheus_node_exporter_install
     - docker_install
     - k8s_install
+    - k8s_preconfigure_network
   tags:
     - k8s_prepare
 

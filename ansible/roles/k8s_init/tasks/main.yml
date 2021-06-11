@@ -1,29 +1,55 @@
 ---
-- name: collect facts about system services
-  service_facts:
-  register: services_state
+- name: Init k8s cluster (This block run once)
+  block:
+    - name: collect facts about system services
+      service_facts:
+      register: services_state
 
-- name: Initialize the Kubernetes cluster using kubeadm
-  command: sudo kubeadm init --apiserver-advertise-address="{{ ip }}" --apiserver-cert-extra-sans="{{ ip }}" --pod-network-cidr=10.244.0.0/16
+    - name: Initialize the Kubernetes cluster using kubeadm
+      command: sudo kubeadm init --apiserver-advertise-address="{{ ip }}" --apiserver-cert-extra-sans="{{ ip }}" --pod-network-cidr=10.244.0.0/16
+      run_once: true
+      when: ansible_facts.services['kubelet.service']['state'] != 'running'
+
+    - name: Setup kubeconfig for vagrant user
+      command: "{{ item }}"
+      with_items:
+        - mkdir -p /home/{{ ansible_user }}/.kube
+        - cp -f /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config
+        - chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config
+
+    ###################################################
+    # COPY admin.conf to localhost (first)            #
+    # 
+    # - name: Copy admin.conf to localhost
+    #   local_action: command rsync -aPe ssh --rsync-path='sudo rsync' {{ ansible_user }}@{{ inventory_hostname }}:/etc/kubernetes/admin.conf ${HOME}/.kube/config
+    #   become: no
+    ###################################################
+
+    ###################################################
+    # COPY admin.conf to localhost (second)           #
+    #
+    - name: Copy an admin.conf into var admin_conf
+      command: cat /etc/kubernetes/admin.conf
+      register: admin_conf
+      
+    - name: Copy from var admin_conf to ${HOME}/.kube/config
+      delegate_to: localhost
+      copy:
+        content: "{{ admin_conf.stdout }}"
+        dest: ${HOME}/.kube/config
+      become: no
+    ####################################################
+
+    - name: Generate join command
+      command: kubeadm token create --print-join-command
+      register: join_command
+
+    - name: Copy join command to local file
+      debug: 
+        msg: "{{ join_command.stdout }}" 
+
+    - name: Copy join command to local file
+      local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+      become: no
   run_once: true
-  when: ansible_facts.services['kubelet.service']['state'] != 'running'
-
-- name: Setup kubeconfig for vagrant user
-  command: "{{ item }}"
-  with_items:
-    - mkdir -p /home/ansible/.kube || true
-    - cp -f /etc/kubernetes/admin.conf /home/ansible/.kube/config
-    - chown ansible:ansible /home/ansible/.kube/config
-
-- name: Generate join command
-  command: kubeadm token create --print-join-command
-  register: join_command
-
-- name: Copy join command to local file
-  debug: 
-    msg: "{{ join_command.stdout_lines }}" 
-
-- name: Copy join command to local file
-  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
-  become: no
 
