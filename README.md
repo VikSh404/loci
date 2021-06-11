@@ -15,8 +15,7 @@ vim ansible/roles/linux_os_useradd/files/ansible.pub # for keys
 
 ## Create new infrastructure:
 ```bash
-cd workdir
-vagrant up
+cd workdir && vagrant up
 
 # Tips:
 # Useful for quick start:
@@ -25,8 +24,7 @@ vagrant up
 ```
 ## Run ansible-playbooks:
 ```bash
-cd workdir/ansible
-ansible-playbook loci.yml
+cd workdir/ansible && ansible-playbook loci.yml
 
 # Tips:
 # Exclude unused modules:
