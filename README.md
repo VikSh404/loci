@@ -33,7 +33,7 @@ cd workdir/ansible && ansible-playbook loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
 ```
 # Interested way
-1) Install proxmox on your server (proxmox.com/en/)
+1) Install proxmox on your server (https://proxmox.com/en/)
 2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 3) Run terraform tf
 ```bash
