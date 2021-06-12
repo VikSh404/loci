@@ -1,0 +1,12 @@
+---
+- name:  Nodes preparation
+  hosts: k8sthw-vm
+  serial: 7
+  become: true
+  # vars:
+  #   docker_install_hold: true
+  #   k8s_install_hold: true
+  roles:
+    - k8sthw-install
+  tags:
+    - k8sthw_prepare

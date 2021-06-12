@@ -1,0 +1,5 @@
+{
+"CN": "system:node:k8sthw-worker-2",
+"key": { "algo": "rsa", "size": 2048 },
+"names": [{ "C": "RU", "L": "Moscow", "O": "system:nodes", "OU": "Loci install k8s the HW", "ST": "Moscow area"}]
+}

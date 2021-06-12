@@ -2,6 +2,7 @@
 - name:  Nodes preparation
   hosts: vm
   serial: 5
+  become: true
   vars:
     docker_install_hold: true
     k8s_install_hold: true
@@ -15,16 +16,18 @@
     - k8s_prepare
 
 - name: Kube init cluster
-  hosts: masters
+  hosts: controllers
   serial: 5
+  become: true
   roles:
     - k8s_init
   tags:
     - control_plane_init
 
 - name: Kube init cluster
-  hosts: nodes
+  hosts: workers
   serial: 5
+  become: true
   roles:
     - k8s_join_node
   tags:

@@ -1,13 +1,43 @@
+# logs
 *.log
 *.logs
-ansible/*.logs
-ansible/*.log
+
+# Ansible's meta
 ansible/*.retry
-*/.vagrant
+
+# Vagrant's meta
 *.vagrant
+
+# Tests
 *test*
-*/*test*
-.DS_Store
-*/.DS_Stores
+
+# MacOS's trash
+*.DS_Store
+
+# Ansible k8s join-command
 *join-command.sh
 *join-command
+
+# Terraform's meta
+*.terraform
+*terraform.tfstate
+*.backup
+*.terraform*
+
+# Keys
+*.pem
+*.ca
+*.csr
+
+# python
+*__pycache__*
+*.pyc
+
+#k8s
+*/*.kubeconfig
+*kubeconfig
+k8s/k8sthw/*.kubeconfig
+ansible/roles/k8sthw-install/files/*.kubeconfig
+ansible/roles/k8sthw-install/files/*.pem
+ansible/roles/k8sthw-install/files/*.ca
+ansible/roles/k8sthw-install/files/*.csr

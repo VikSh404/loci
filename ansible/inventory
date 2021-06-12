@@ -1,24 +1,55 @@
 [all:vars]
 ansible_user=ansible
+#ansible_python_interpreter=/usr/bin/python3
+ansible_python_interpreter="/usr/bin/env python3"
+subnet=192.168.88.0/24
+
+#@@@@@@@@@@@#
+# localhost #
+#@@@@@@@@@@@#
+
+[lo]
+localhost ansible_user=viktorshevchenko
+
+#################
+#   simple way  #
+#################
 
 [hypervisor]
-192.168.88.250 hostname=server ansible_user=mrv subnet=192.168.88.0/24 
+192.168.88.250 
 
 [vm]
-192.168.88.11 hostname=master-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.14 hostname=node-1   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.15 hostname=node-2   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.16 hostname=node-3   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.17 hostname=node-4   ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+192.168.88.11
+192.168.88.1[4:7]
 
+[controllers]
+192.168.88.11 
 
-[masters]
-192.168.88.11 ip=192.168.88.11 hostname=master-1 ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+[workers]
+192.168.88.1[4:7]
 
-[nodes]
-192.168.88.14 ip=192.168.88.14 hostname=node-1  ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.15 ip=192.168.88.15 hostname=node-2  ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.16 ip=192.168.88.16 hostname=node-3  ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
-192.168.88.17 ip=192.168.88.17 hostname=node-4  ansible_python_interpreter=/usr/bin/python3 subnet=192.168.88.0/24 
+#==============#
+#    k8sthw    #
+#==============#
 
+[k8sthw:vars]
+LOCI=k8sthw
 
+[k8sthw]
+192.168.88.8[0:5]  
+192.168.88.99
+
+[k8sthw-vm]
+192.168.88.8[0:5]  
+192.168.88.99
+
+[k8sthw-controllers]
+192.168.88.8[0:2]  
+
+[k8sthw-workers]
+192.168.88.8[3:5]
+
+[k8sthw-proxy]
+192.168.88.99
+
+################

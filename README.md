@@ -3,8 +3,17 @@
 <div>
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=100%>
 </div>
+<p><a name="top">Table of contents:</a></p>
 
-# Simple way
+1. <a href="#infra">Prepare infrastructure</a>
+    1. <a href="#infra_sw_vagrant">Simple way (Vagrant)</a>
+    1. <a href="#infra_iw_terraform">Interested way (Terraform + Proxmox)</a>
+1. <a href="#k8s">Intsall k8s</a>
+    1. <a href="#k8s_sw_ansible_kubeadm">Simple way (ansible + kubeadm)</a>
+    1. <a href="#k8s_hw_ansible">Hard way (ansible)</a>
+
+# <p><a name="infra">Prepare infrastructure</a></p> 
+# <p><a name="infra_sw_vagrant">Simple way</a></p> 
 ## Preparation.
 Change IP-addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
 
@@ -16,34 +25,49 @@ vim ansible/roles/linux_os_useradd/files/ansible.pub # for keys
 
 ## Create new infrastructure:
 ```bash
-cd workdir && vagrant up
+cd vagrant && vagrant up
 
 # Tips:
 # Useful for quick start:
 # vagrant destroy --force
 # vagrant status
 ```
-## Run ansible-playbooks:
+
+# <p><a name="infra_iw_terraform">Interested way</a></p> 
+1) Install proxmox on your server (https://proxmox.com/en/)
+2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+3) Run terraform tf-file
 ```bash
-cd workdir/ansible && ansible-playbook loci.yml
+terraform -chdir=terraform/proxmox/k8s/ init
+terraform -chdir=terraform/proxmox/k8s/ apply
+
+```
+
+# <p><a name="k8s">Install k8s</a></p> 
+# <p><a name="k8s_sw_ansible_kubeadm">Simple way</a></p> 
+## Run the ansible-playbooks:
+Install kubectl on local machine https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
+```bash
+cd ansible && ansible-playbook loci.yml
 
 # Tips:
 # Exclude unused modules:
 # ansible-playbook --skip-tags 'k8s_prepare' --list-tasks  --tags 'join_nodes' loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
 ```
-# Interested way
-1) Install proxmox on your server (proxmox.com/en/)
-2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
-3) Run terraform tf
-```bash
-cd workdir/terraform && terraform apply
 
-# Tips:
-# terraform destroy
-```
-4) Run ansible
+# <p><a name="k8s_hw_ansible">Hard way</a></p> 
+## Preparation on local machine:
+* Install kubectl on local machine https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
+
+* Install cfssl on local machine:
 ```bash
-cd workdir/ansible && ansible-playbook loci.yml
+(brew|apt|yum) install cfssl 
+```
+* [Create CA](k8s/hw/README.md)
+
+## Run the ansible-playbooks:
+```bash
 
 ```
+  <p><a href="#top">Go up</a></p> 

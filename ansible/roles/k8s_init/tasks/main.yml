@@ -6,7 +6,7 @@
       register: services_state
 
     - name: Initialize the Kubernetes cluster using kubeadm
-      command: sudo kubeadm init --apiserver-advertise-address="{{ ip }}" --apiserver-cert-extra-sans="{{ ip }}" --pod-network-cidr=10.244.0.0/16
+      command: sudo kubeadm init --apiserver-advertise-address="{{ ansible_host }}" --apiserver-cert-extra-sans="{{ ansible_host }}" --pod-network-cidr=10.244.0.0/16
       run_once: true
       when: ansible_facts.services['kubelet.service']['state'] != 'running'
 

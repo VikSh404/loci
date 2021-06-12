@@ -4,29 +4,33 @@
 <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Kubernetes_%28container_engine%29.png" width=13%>
 </div>
 
-## Tips.
-
-custom-columns
+Create certificates:
 ```bash
-ansible@master-1:~$ kubectl get nodes -o=custom-columns=NAME:.metadata.name,IP:.status.addresses[0].address
-NAME       IP
-master-1   192.168.88.11
-node-1     192.168.88.14
-node-2     192.168.88.15
-node-3     192.168.88.16
-node-4     192.168.88.17
+./create-all-keys.sh
 ```
 
-Simplest example deploy via pipe
+Create configure files:
 ```bash
-cat << EOF | kubectl create -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  containers:
-  - name: nginx
-    image: nginx
+./create-all-configs.sh
+```
+
+Test ETCD:
+```bash
+sudo ETCDCTL_API=3 etcdctl member list \
+--endpoints=https://127.0.0.1:2379 \
+--cacert=/etc/etcd/ca.pem \
+--cert=/etc/etcd/kubernetes.pem \
+--key=/etc/etcd/kubernetes-key.pem
 EOF
+```
+
+k8s heathcheck:
+```bash
+http://127.0.0.1/healthz
+curl -k https://127.0.0.1/healthz
+curl -H "Host: kubernetes.default.svc.cluster.local" http://127.0.0.1/healthz
+```
+Proxy:
+```bash
+curl -k https://localhost:6443/version
 ```

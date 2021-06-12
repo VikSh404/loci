@@ -1,0 +1,5 @@
+{
+"CN": "system:kube-proxy",
+"key": { "algo": "rsa", "size": 2048 },
+"names": [ { "C": "RU", "L": "Moscow", "O": "system:node-proxier", "OU": "Loci install k8s the HW", "ST": "Moscow area" }]
+}

@@ -1,0 +1,6 @@
+---
+ID: 0
+IP: '192.168.88.8{{ ID + 3 }}'
+HOSTNAME: 'k8sthw-worker-{{ ID }}'
+ETCD_NAME: "{{ HOSTNAME }}"
+INTERNAL_IP: "{{ IP }}"

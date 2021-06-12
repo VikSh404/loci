@@ -1,0 +1,5 @@
+---
+ID: 0
+IP: '192.168.88.99'
+PUBLIC_IP: "{{ IP }}"
+HOSTNAME: "k8sthw-proxy-{{ ID }}"

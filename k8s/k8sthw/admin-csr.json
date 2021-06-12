@@ -1,0 +1,4 @@
+{
+"CN": "admin", "key": { "algo": "rsa", "size": 2048},
+"names": [ { "C": "RU", "L": "Moscow", "O": "system:masters", "OU": "Loci install k8s the HW", "ST": "Moscow area" } ]
+}

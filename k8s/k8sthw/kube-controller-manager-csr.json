@@ -1,0 +1,4 @@
+{
+"CN": "system:kube-controller-manager", 
+"key": { "algo": "rsa", "size": 2048 },
+"names": [ { "C": "RU", "L": "Moscow", "O": "system:kube-controller-manager", "OU": "Loci install k8s the HW", "ST": "Moscow area" } ]}
