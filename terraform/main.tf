@@ -24,6 +24,7 @@ resource "proxmox_vm_qemu" "cloudinit-node" {
   clone = "VM 9000"
   guest_agent_ready_timeout = 60  
   agent = 1
+  define_connection_info = true
 
  disk {
     #id              = "0"
@@ -65,7 +66,7 @@ resource "proxmox_vm_qemu" "cloudinit-master" {
   clone = "VM 9000"
   guest_agent_ready_timeout = 60  
   agent = 1
-
+  define_connection_info = true
  disk {
     #id              = "0"
     size            = "10G"

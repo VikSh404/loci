@@ -11,3 +11,7 @@ ansible/*.retry
 */.DS_Stores
 *join-command.sh
 *join-command
+*.terraform
+*/*terraform.tfstate
+*/*.backup
+*/.terraform*
