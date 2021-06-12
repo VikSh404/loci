@@ -60,7 +60,6 @@
         name: kubelet
         enabled: yes
 
-
     - name: Copy 10-kubeadm.conf file from jinja2-template
       template:
         src: 10-kubeadm.conf.j2
