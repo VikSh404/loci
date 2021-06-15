@@ -6,11 +6,11 @@
 <p><a name="top">Table of contents:</a></p>
 
 1. <a href="#infra">Prepare infrastructure</a>
-  1. <a href="#infra_sw_vagrant">Simple way (Vagrant)</a>
-  1. <a href="#infra_iw_terraform">Interested way (Terraform + Proxmox)</a>
+    1. <a href="#infra_sw_vagrant">Simple way (Vagrant)</a>
+    1. <a href="#infra_iw_terraform">Interested way (Terraform + Proxmox)</a>
 1. <a href="#k8s">Intsall k8s</a>
-  1. <a href="#k8s_sw_ansible_kubeadm">Simple way (ansible + kubeadm)</a>
-  1. <a href="#k8s_hw_ansible">Hard way (ansible)</a>
+    1. <a href="#k8s_sw_ansible_kubeadm">Simple way (ansible + kubeadm)</a>
+    1. <a href="#k8s_hw_ansible">Hard way (ansible)</a>
 
 # <p><a name="infra">Prepare infrastructure</a></p> 
 # <p><a name="infra_sw_vagrant">Simple way</a></p> 
