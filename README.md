@@ -3,9 +3,17 @@
 <div>
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=100%>
 </div>
-<p><a name="top"></a></p>
+<p><a name="top">Table of contents:</a></p>
 
-# Simple way
+1. <a name="infra">Prepare infrastructure</a>
+    1. <a name="infra_sw_vagrant">Simple way (Vagrant)</a>
+    1. <a name="infra_iw_terraform">Interested way (Terraform + Proxmox)</a>
+1. <a name="k8s">Intsall k8s</a>
+    1. <a name="k8s_sw_ansible_kubeadm">Simple way (ansible + kubeadm)</a>
+    1. <a name="k8s_hw_ansible">Hard way (ansible)</a>
+
+# <p><a href="#infra">Prepare infrastructure</a></p> 
+# <p><a href="#infra_sw_vagrant">Simple way</a></p> 
 ## Preparation.
 Change IP-addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
 
@@ -17,35 +25,37 @@ vim ansible/roles/linux_os_useradd/files/ansible.pub # for keys
 
 ## Create new infrastructure:
 ```bash
-cd workdir && vagrant up
+cd vagrant && vagrant up
 
 # Tips:
 # Useful for quick start:
 # vagrant destroy --force
 # vagrant status
 ```
-## Run ansible-playbooks:
+
+# <p><a href="#infra_sw_vagrant">Interested way</a></p> 
+1) Install proxmox on your server (https://proxmox.com/en/)
+2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+3) Run terraform tf
 ```bash
-cd workdir/ansible && ansible-playbook loci.yml
+terraform -chdir=terraform/k8s/ init
+terraform -chdir=terraform/k8s/ apply
+
+```
+
+# <p><a href="#k8s">Install k8s</a></p> 
+# <p><a href="#k8s_sw_ansible_kubeadm">Simple way</a></p> 
+## Run the ansible-playbooks:
+```bash
+cd ansible && ansible-playbook loci.yml
 
 # Tips:
 # Exclude unused modules:
 # ansible-playbook --skip-tags 'k8s_prepare' --list-tasks  --tags 'join_nodes' loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
 ```
-# Interested way
-1) Install proxmox on your server (https://proxmox.com/en/)
-2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
-3) Run terraform tf
-```bash
-cd workdir/terraform && terraform apply
 
-# Tips:
-# terraform destroy
-```
-4) Run ansible
-```bash
-cd workdir/ansible && ansible-playbook loci.yml
+# <p><a href="#k8s_sw_ansible_kubeadm">Hard way</a></p> 
+## Run the ansible-playbooks:
 
-```
-  <p><a href="#top">Go up</a></p>
+  <p><a href="#top">Go up</a></p> 
