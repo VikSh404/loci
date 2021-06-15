@@ -5,12 +5,12 @@
 </div>
 <p><a name="top">Table of contents:</a></p>
 
-1. <a name="infra">Prepare infrastructure</a>
-    1. <a name="infra_sw_vagrant">Simple way (Vagrant)</a>
-    1. <a name="infra_iw_terraform">Interested way (Terraform + Proxmox)</a>
-1. <a name="k8s">Intsall k8s</a>
-    1. <a name="k8s_sw_ansible_kubeadm">Simple way (ansible + kubeadm)</a>
-    1. <a name="k8s_hw_ansible">Hard way (ansible)</a>
+<p><a name="infra">1 Prepare infrastructure</a></p>
+<p><a name="infra_sw_vagrant">1.1 Simple way (Vagrant)</a></p>
+<p><a name="infra_iw_terraform">1.2 Interested way (Terraform + Proxmox)</a></p>
+<p><a name="k8s">2. Intsall k8s</a></p>
+<p><a name="k8s_sw_ansible_kubeadm">2.1 Simple way (ansible + kubeadm)</a></p>
+<p><a name="k8s_hw_ansible">2.2 Hard way (ansible)</a></p>
 
 # <p><a href="#infra">Prepare infrastructure</a></p> 
 # <p><a href="#infra_sw_vagrant">Simple way</a></p> 
