@@ -1,3 +1,4 @@
+cat << EOF | kubectl create -f -
 apiVersion: v1
 kind: Pod
 metadata:
@@ -6,3 +7,4 @@ spec:
   containers:
   - name: nginx
     image: nginx
+EOF

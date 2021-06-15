@@ -3,6 +3,7 @@
 <div>
 <img src="https://miro.medium.com/max/2048/1*C0_rTw0xLJgQ_dEMGuJW2A.jpeg" width=100%>
 </div>
+<p><a name="top"></a></p>
 
 # Simple way
 ## Preparation.
@@ -47,3 +48,4 @@ cd workdir/terraform && terraform apply
 cd workdir/ansible && ansible-playbook loci.yml
 
 ```
+  <p><a href="#top">Go up</a></p>
