@@ -33,7 +33,7 @@ cd vagrant && vagrant up
 # vagrant status
 ```
 
-# <p><a name="#infra_sw_vagrant">Interested way</a></p> 
+# <p><a name="#infra_iw_terraform">Interested way</a></p> 
 1) Install proxmox on your server (https://proxmox.com/en/)
 2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 3) Run terraform tf
@@ -55,7 +55,7 @@ cd ansible && ansible-playbook loci.yml
 # ansible-playbook  --tags k8s_init loci.yml
 ```
 
-# <p><a name="#k8s_sw_ansible_kubeadm">Hard way</a></p> 
+# <p><a name="#k8s_hw_ansible">Hard way</a></p> 
 ## Run the ansible-playbooks:
 
   <p><a href="#top">Go up</a></p> 
