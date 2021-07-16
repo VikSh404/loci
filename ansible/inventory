@@ -1,7 +1,7 @@
 [all:vars]
 ansible_user=ansible
-#ansible_python_interpreter=/usr/bin/python3
-ansible_python_interpreter="/usr/bin/env python3"
+# ansible_python_interpreter=/usr/bin/python3
+# ansible_python_interpreter="/usr/bin/env python3"
 subnet=192.168.88.0/24
 
 #@@@@@@@@@@@#
@@ -12,21 +12,38 @@ subnet=192.168.88.0/24
 localhost ansible_user=viktorshevchenko
 
 #################
-#   simple way  #
+#   k8s         #
 #################
 
 [hypervisor]
 192.168.88.250 
 
 [vm]
-192.168.88.11
-192.168.88.1[4:7]
+192.168.88.70
+192.168.88.7[3:5]
 
 [controllers]
-192.168.88.11 
+192.168.88.7[0:2] 
 
 [workers]
-192.168.88.1[4:7]
+192.168.88.7[3:5]
+
+
+################
+#   patroni    #
+################
+
+[pg-vm]
+192.168.88.5[0:5]
+
+[pg-haproxy]
+192.168.88.5[1:2] 
+
+[pg-database]
+192.168.88.5[3:5]
+
+[patroni-db]
+192.168.88.5[3:5]
 
 #==============#
 #    k8sthw    #

@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap-share
+  namespace: nginx-test-zone
+data:
+  default.conf: |
+    server {
+      listen 80 default_server;
+      server_name _;
+      
+      types {}
+      default_type text/html;
+
+      location / {
+        return 200 '$hostname\n$time_local\n80\n';
+      }
+      location /files {
+        alias /tmp;
+        autoindex on;
+        client_body_temp_path /tmp;
+        dav_mathods PUT DELETE MKCOL COPY MOVE;
+        dacv_access user:rw group:rw all:r;
+      }
+
+    }
+
+
+
+    server {
+      listen 81 default_server;
+      server_name _;
+      
+      types {}
+      default_type text/html;
+
+      location / {
+        return 200 '$hostname\n$time_local\n81\n';
+      }
+    }

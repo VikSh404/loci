@@ -1,0 +1,9 @@
+---
+- name:  PGHA
+  hosts: pg-database
+  serial: 7
+  become: true
+  roles:
+    - patroni_install
+  tags:
+    - patroni_install

@@ -49,7 +49,7 @@
         msg: "{{ join_command.stdout }}" 
 
     - name: Copy join command to local file
-      local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+      local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="/tmp/join-command"
       become: no
   run_once: true
 
