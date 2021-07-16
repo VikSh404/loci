@@ -32,6 +32,7 @@ ansible/*.retry
 # python
 *__pycache__*
 *.pyc
+*.venv*
 
 #k8s
 */*.kubeconfig

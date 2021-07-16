@@ -1,0 +1,76 @@
+docker run -ti --rm postgres psql -U ocity -h test-test-test.cz7eovxkq7ga.eu-central-1.rds.amazonaws.com postgres
+
+## kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=10.200.0.0/16"
+kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
+
+
+ssh -L 6443:localhost:6443 user@<your Load balancer cloud server public IP>
+
+
+
+kubectl get pods -l run=busybox -o jsonpath="{.items[0].metadata.name}"
+
+
+POD_NAME=$(kubectl get pods -l run=busybox -o jsonpath="{.items[0].metadata.name}")
+kubectl exec -ti $POD_NAME -- nslookup kubernetes
+
+
+
+kubectl run busybox --image=busybox:1.28 --command -- sleep 3600
+POD_NAME=$(kubectl get pods -l run=busybox -o jsonpath="{.items[0].metadata.name}")
+
+
+kubectl delete deployment busybox
+
+
+
+1)
+kubectl create secret generic kubernetes-the-hard-way --from-literal="mykey=mydata"
+
+
+sudo ETCDCTL_API=3 etcdctl get \
+ --endpoints=https://127.0.0.1:2379 \
+ --cacert=/etc/etcd/ca.pem \
+ --cert=/etc/etcd/kubernetes.pem \
+ --key=/etc/etcd/kubernetes-key.pem \
+ /registry/secrets/default/kubernetes-the-hard-way | hexdump -C
+
+
+2)
+kubectl run nginx --image=nginx
+
+kubectl get pods -l run=nginx
+
+3)
+POD_NAME=$(kubectl get pods -l run=nginx -o jsonpath="{.items[0].metadata.name}")
+kubectl port-forward $POD_NAME 8081:80
+
+curl --head http://127.0.0.1:8081
+
+kubectl exec -ti $POD_NAME -- nginx -v
+
+
+
+kubectl expose deployment nginx --port 80 --type NodePort
+
+
+
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: untrusted
+  annotations:
+    io.kubernetes.cri.untrusted-workload: "true"
+spec:
+  containers:
+    - name: webserver
+      image: gcr.io/hightowerlabs/helloworld:2.0.0
+EOF
+
+
+
+
+kubectl set image deployment/fileshare nginx=centosadmin/registry-nginx:1.13
+
+

@@ -4,7 +4,7 @@
 #  register: services_state
   
 - name: Copy the join command to server location
-  copy: src=join-command dest=/tmp/join-command.sh mode=0777
+  copy: src=/tmp/join-command dest=/tmp/join-command.sh mode=0777
   when: ansible_facts.services['kubelet.service']['state'] != 'running'
 
 - name: Join the node to cluster

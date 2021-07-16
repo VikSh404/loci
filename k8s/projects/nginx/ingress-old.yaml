@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-old
+  namespace: nginx-test-zone
+spec:
+  rules:
+  - host: nginx-k8s-old
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx-service
+          servicePort: 8081
+# status:
+#   loadBalancer:
+#     ingress:
+#       - ip: 192.168.88.73
+#       - ip: 192.168.88.74
+#       - ip: 192.168.88.75

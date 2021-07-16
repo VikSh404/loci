@@ -1,0 +1,7 @@
+---
+ETCD_INITIAL_CLUSTER: "{{ hostvars[groups['patroni-db'][0]]['HOSTNAME'] }}=http://{{ hostvars[groups['patroni-db'][0]]['INTERNAL_IP'] }}:2380,{{ hostvars[groups['patroni-db'][1]]['HOSTNAME'] }}=http://{{ hostvars[groups['patroni-db'][1]]['INTERNAL_IP'] }}:2380,{{ hostvars[groups['patroni-db'][2]]['HOSTNAME'] }}=http://{{ hostvars[groups['patroni-db'][2]]['INTERNAL_IP'] }}:2380"
+ETCD_HOSTS: "{{ hostvars[groups['patroni-db'][0]]['INTERNAL_IP'] }}:2380,{{ hostvars[groups['patroni-db'][1]]['INTERNAL_IP'] }}:2380,{{ hostvars[groups['patroni-db'][2]]['INTERNAL_IP'] }}:2380"
+ETCD_0_IP: "{{ hostvars[groups['patroni-db'][0]]['INTERNAL_IP'] }}"
+ETCD_1_IP: "{{ hostvars[groups['patroni-db'][1]]['INTERNAL_IP'] }}"
+ETCD_2_IP: "{{ hostvars[groups['patroni-db'][2]]['INTERNAL_IP'] }}"
+KUBERNETES_PUBLIC_ADDRESS: "{{ hostvars[groups['patroni-db'][0]]['PUBLIC_IP'] }}"
