@@ -65,3 +65,15 @@ One Two Three
 192.168.1.1 = 2
 192.168.1.4 = 1
 ```
+
+```
+➜  ~ cat t | gawk '$1~/1/ {++cnt} END {print "One = ", cnt}'
+One =  2
+```
+
+Only for certain column
+```
+➜  awk git:(master) cat t | gawk ' $3~/[Ff]ail/ { if (array[$2] == 0 ) array[$2]=1; else array[$2]=array[$2]+1 }  END { for (key in array) {print key" = " array[key]} } '
+192.168.1.1 = 2
+192.168.1.4 = 1
+```
