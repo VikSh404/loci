@@ -1,4 +1,5 @@
 I always forgot these one when I was working on customers' sites
+
 ```
 cat > /etc/yum.repos.d/local.repo << EO\F
 [LocalRepo_BaseOS]
