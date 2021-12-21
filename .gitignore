@@ -10,6 +10,7 @@ ansible/*.retry
 
 # Tests
 *test*
+*workspace.code-workspace
 
 # MacOS's trash
 *.DS_Store
@@ -42,3 +43,5 @@ ansible/roles/k8sthw-install/files/*.kubeconfig
 ansible/roles/k8sthw-install/files/*.pem
 ansible/roles/k8sthw-install/files/*.ca
 ansible/roles/k8sthw-install/files/*.csr
+
+
