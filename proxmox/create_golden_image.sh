@@ -19,8 +19,8 @@ done
 # From https://pve.proxmox.com/wiki/Cloud-Init_Support
 # GOLDEN_VM_NUMBER=9000
 # IMAGE_NAME=bionic-server-cloudimg-amd64.img
-GOLDEN_VM_NUMBER=${IMAGE}
-IMAGE_NAME=${UID}
+GOLDEN_VM_NUMBER=${UID}
+IMAGE_NAME=${IMAGE}
 
 
 # download the image

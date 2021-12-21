@@ -1,0 +1,65 @@
+cluster_name: core-master
+name: core-master
+enable_cluster_alerting: false
+enable_cluster_monitoring: false
+ignore_docker_version: true
+kubernetes_version: "v1.20.9-rancher1-1"
+ssh_key_path: /Users/viktorshevchenko/.ssh/id_rsa
+
+
+nodes:
+  - address: 192.168.88.81
+    hostname_override: rancher-master-01.home.in
+    user: ansible
+    role: [controlplane,worker,etcd]  
+  - address: 192.168.88.82
+    hostname_override: rancher-master-02.home.in
+    user: ansible
+    role: [controlplane,worker,etcd]
+  - address: 192.168.88.83
+    hostname_override: rancher-master-03.home.in
+    user: ansible
+    role: [controlplane,worker,etcd]
+
+ingress:
+  provider: nginx
+  # extra_args:
+  #   http-port: 4080
+  #   https-port: 4443
+
+services:
+  kubelet:
+    extra_binds:
+      - "/etc/iscsi:/etc/iscsi"
+      - "/sbin/iscsiadm:/sbin/iscsiadm"
+  # etcd:
+  #   backup_config:
+  #     enabled: true     # enables recurring etcd snapshots
+      # interval_hours: 6 # time increment between snapshots
+      # retention: 5     # time in days before snapshot purge
+      # Optional S3
+      # s3backupconfig:
+      #   access_key: ""
+      #   secret_key: ""
+      #   bucket_name: "k8s-backup"
+      #   folder: "master-etcd" # Available as of v2.3.0
+      #   endpoint: "s3.eu-central-1.amazonaws.com"
+      #   region: "eu-central-1"
+      #   custom_ca: ""
+
+  kube-controller:
+    extra_args:
+      terminated-pod-gc-threshold: 100
+
+monitoring:
+  provider: "metrics-server"
+
+network:
+  plugin: canal
+  options:
+    canal_flannel_backend_type: vxlan
+
+authentication:
+    strategy: x509
+    sans:
+      - "rancher.home.in"

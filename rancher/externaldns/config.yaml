@@ -1,0 +1,30 @@
+## K8s resources type to be observed for new DNS entries by ExternalDNS
+##
+sources:
+- service
+- ingress
+# - crd
+
+## DNS provider where the DNS records will be created. Available providers are:
+## - aws, azure, cloudflare, coredns, designate, digitalocean, google, infoblox, rfc2136
+##
+provider: pdns
+txtOwnerId: "home-master-cluster"
+policy: sync
+## PowerDNS configuration to be set via arguments/env. variables
+##
+pdns:
+  apiUrl: "http://powerdns-api.powerdns"
+  apiPort: "8081"
+  apiKey: "wrvwervwerv23"
+
+## Limit possible target zones by domain suffixes (optional)
+##
+domainFilters: ["home.in"]
+## Prefix to create a TXT record with a name following the pattern prefix.<CNAME record>
+##
+registry: "txt"
+txtPrefix: "cnametxt"
+## Adjust the interval for DNS updates
+##
+interval: "1m"

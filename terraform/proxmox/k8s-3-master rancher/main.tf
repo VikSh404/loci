@@ -9,26 +9,28 @@ terraform {
 
 provider "proxmox" {
     pm_tls_insecure = true
-    pm_api_url = "https://192.168.88.250:8006/api2/json"
+    pm_api_url = "https://10.0.0.10:8006/api2/json"
+    pm_user = "root@pam"
+    pm_password = "rootroot"
 }
 
 
+resource "proxmox_vm_qemu" "rancher-master" {
 
-resource "proxmox_vm_qemu" "cloudinit-master" {
-
-  vmid = "${ 1020 + count.index}"
+  vmid = "${ 1081 + count.index}"
     
-  count = 1
-  name = "master-${count.index}"
+  count = 3
+  name = "rancher-master-0${1 + count.index}"
   target_node = "pve"
   full_clone  = true
   clone = "VM 9001"
   guest_agent_ready_timeout = 60  
   agent = 1
   define_connection_info = true
+
  disk {
     #id              = "0"
-    size            = "10G"
+    size            = "100G"
     type            = "scsi"
     storage         = "local-lvm"        
     #storage_type    = "lvm-thin"
@@ -37,8 +39,8 @@ resource "proxmox_vm_qemu" "cloudinit-master" {
   }
 
   cores = 2
-  sockets = 1
-  memory = 2048
+  sockets = 2
+  memory = 8128
 
   ciuser = "ansible"
   cipassword = "ansible"
@@ -50,7 +52,7 @@ resource "proxmox_vm_qemu" "cloudinit-master" {
   EOF
 
   os_type = "cloud-init"
-  ipconfig0 = "ip=192.168.88.${20 + count.index}/24,gw=192.168.88.1"
+  ipconfig0 = "ip=10.0.0.${81 + count.index}/24,gw=10.0.0.138"
+  #nameserver = "192.168.88.99"
 
  }
-
