@@ -8,15 +8,15 @@ ssh_key_path: /Users/viktorshevchenko/.ssh/id_rsa
 
 
 nodes:
-  - address: 192.168.88.81
+  - address: 10.0.0.81
     hostname_override: rancher-master-01.home.in
     user: ansible
     role: [controlplane,worker,etcd]  
-  - address: 192.168.88.82
+  - address: 10.0.0.82
     hostname_override: rancher-master-02.home.in
     user: ansible
     role: [controlplane,worker,etcd]
-  - address: 192.168.88.83
+  - address: 10.0.0.83
     hostname_override: rancher-master-03.home.in
     user: ansible
     role: [controlplane,worker,etcd]

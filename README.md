@@ -31,6 +31,49 @@ I decided to start an open project because it forced me to write better manuals 
 
 
 # <p><a name="infra">Prepare infrastructure</a></p> 
+
+To start to install VM you need to prepare Hypervizor and golden image (template)
+
+1. Firstly, you need to create the live-USB with Promox and install proxmox to your host (Use the official guide)
+1. Create golden image:
+
+```bash
+cd proxmox
+
+GOLDEN_VM_NUMBER=9000
+IMAGE_NAME=bionic-server-cloudimg-amd64.img
+# download the image
+
+wget https://cloud-images.ubuntu.com/bionic/current/${IMAGE_NAME}
+
+# create a new VM
+qm create ${GOLDEN_VM_NUMBER} --memory 2048 --net0 virtio,bridge=vmbr0
+
+# import the downloaded disk to local-lvm storage
+qm importdisk ${GOLDEN_VM_NUMBER} ${IMAGE_NAME} local-lvm
+
+# finally attach the new disk to the VM as scsi drive
+qm set ${GOLDEN_VM_NUMBER} --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-${GOLDEN_VM_NUMBER}-disk-0
+
+# he next step is to configure a CD-ROM drive, which will be used to pass the Cloud-Init data to the VM.
+qm set ${GOLDEN_VM_NUMBER} --ide2 local-lvm:cloudinit
+
+# To be able to boot directly from the Cloud-Init image, set the bootdisk parameter to scsi0, and restrict BIOS to boot from disk only. 
+# This will speed up booting, because VM BIOS skips the testing for a bootable CD-ROM.
+qm set ${GOLDEN_VM_NUMBER} --boot c --bootdisk scsi0
+
+#Also configure a serial console and use it as a display. 
+# Many Cloud-Init images rely on this, as it is an requirement for OpenStack images.
+qm set ${GOLDEN_VM_NUMBER} --serial0 socket --vga serial0
+
+# In a last step, it is helpful to convert the VM into a template. 
+# From this template you can then quickly create linked clones. 
+# The deployment from VM templates is much faster than creating a full clone (copy).
+qm template ${GOLDEN_VM_NUMBER}
+```
+Now you can see new template in your console.
+
+
 ## <p><a name="infra_sw_vagrant">Vagrant way</a></p> 
 ### Preparation.
 You need to change IP-addresses, an interface name, and open keys in an ansible playbook (linux_os_useradd -> files -> ansible.pub) and inventory.
@@ -56,8 +99,10 @@ cd vagrant && vagrant up
 2) Install terraform on a local PC/MacOS (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 3) Run terraform tf-file
 ```bash
-terraform -chdir=terraform/proxmox/k8s/ init
-terraform -chdir=terraform/proxmox/k8s/ apply
+# terraform -chdir=terraform/proxmox/k8s/ init
+# terraform -chdir=terraform/proxmox/k8s/ apply
+cd terraform/proxmox/k8s-3-master_rancher
+terraform apply
 ```
 
 # <p><a name="k8s">Install k8s</a></p> 
@@ -90,8 +135,8 @@ cd ansible && ansible-playbook loci-k8sthw.yml
   
 # <p><a name="k8s_Rancher">Rancher way (CANON PATH)</a></p> 
 
-
-
-
-
+```bash
+cd rancher/
+rke up --config ./cluster.yml
+```
   <p><a href="#top">Go up</a></p> 

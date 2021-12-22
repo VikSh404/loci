@@ -2,7 +2,7 @@
 ansible_user=ansible
 # ansible_python_interpreter=/usr/bin/python3
 # ansible_python_interpreter="/usr/bin/env python3"
-subnet=192.168.88.0/24
+subnet=10.0.0.0/24
 
 #@@@@@@@@@@@#
 # localhost #
@@ -11,62 +11,15 @@ subnet=192.168.88.0/24
 [lo]
 localhost ansible_user=viktorshevchenko
 
+[dns]
+10.0.0.99 hostname=dns
+
 #################
-#   k8s         #
+#  rancher-k8s  #
 #################
 
-[hypervisor]
-192.168.88.250 
+[rancher-k8s]
+10.0.0.81 IP=10.0.0.81 HOSTNAME=rancher-master-01.home.in ansible_ssh_private_key_file=~/.ssh/id_rsa
+10.0.0.82 IP=10.0.0.82 HOSTNAME=rancher-master-02.home.in ansible_ssh_private_key_file=~/.ssh/id_rsa
+10.0.0.83 IP=10.0.0.83 HOSTNAME=rancher-master-03.home.in ansible_ssh_private_key_file=~/.ssh/id_rsa
 
-[vm]
-192.168.88.70
-192.168.88.7[3:5]
-
-[controllers]
-192.168.88.7[0:2] 
-
-[workers]
-192.168.88.7[3:5]
-
-
-################
-#   patroni    #
-################
-
-[pg-vm]
-192.168.88.5[0:5]
-
-[pg-haproxy]
-192.168.88.5[1:2] 
-
-[pg-database]
-192.168.88.5[3:5]
-
-[patroni-db]
-192.168.88.5[3:5]
-
-#==============#
-#    k8sthw    #
-#==============#
-
-[k8sthw:vars]
-LOCI=k8sthw
-
-[k8sthw]
-192.168.88.8[0:5]  
-192.168.88.99
-
-[k8sthw-vm]
-192.168.88.8[0:5]  
-192.168.88.99
-
-[k8sthw-controllers]
-192.168.88.8[0:2]  
-
-[k8sthw-workers]
-192.168.88.8[3:5]
-
-[k8sthw-proxy]
-192.168.88.99
-
-################
