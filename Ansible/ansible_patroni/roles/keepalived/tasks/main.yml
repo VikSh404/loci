@@ -1,0 +1,38 @@
+---
+- name: Copy keepalived notify script
+  copy:
+    src: "epel.repo"
+    dest: "/etc/yum.repos.d/"
+
+- name: Install the latest version of semanage module
+  yum:
+    name: 
+    - keepalived
+    - vim
+    state: present 
+
+- name: Create {{ keepalived_config_dir }} dir
+  file:
+    path: "{{ keepalived_config_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy the keepalived configuration file
+  template:
+    src:  "{{ keepalived_config_file }}"
+    dest: "{{ keepalived_config_dir }}/keepalived.conf"
+  notify: 
+    - Restart keepalived
+
+- name: Copy keepalived notify script
+  copy:
+    src: "{{ item }}"
+    dest: "{{ keepalived_config_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0744
+  loop:
+    - "{{ keepalived_notify_script_file }}"
+    - "{{ keepalived_check_script_file }}"
+  notify:
+    - Restart keepalived

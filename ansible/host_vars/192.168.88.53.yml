@@ -1,6 +1,0 @@
----
-ID: 0
-IP: '192.168.88.53'
-HOSTNAME: 'patroni-{{ ID }}'
-ETCD_NAME: "{{ HOSTNAME }}"
-INTERNAL_IP: "{{ IP }}"

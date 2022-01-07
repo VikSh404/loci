@@ -1,0 +1,4 @@
+user_name: 'ansible'
+user_groups: 'sudo'
+use_sudo: true
+public_key: 'ansible.pub'

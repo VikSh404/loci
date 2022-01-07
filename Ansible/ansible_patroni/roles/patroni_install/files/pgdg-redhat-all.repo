@@ -1,0 +1,300 @@
+#######################################################
+# PGDG Red Hat Enterprise Linux / CentOS repositories #
+#######################################################
+
+# PGDG Red Hat Enterprise Linux / CentOS stable common repository for all PostgreSQL versions
+
+[pgdg-common]
+name=PostgreSQL common RPMs for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/common/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 0
+
+# Red Hat recently breaks compatibility between 8.n and 8.n+1. PGDG repo is
+# affected with the LLVM repo. This is a band aid repo for the llvmjit users
+# whose installations cannot be updated.
+
+[pgdg-centos8-sysupdates]
+name=PostgreSQL Supplementary ucommon RPMs for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/common/pgdg-centos8-sysupdates/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG Red Hat Enterprise Linux / CentOS stable repositories:
+
+[pgdg14]
+name=PostgreSQL 14 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/14/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg13]
+name=PostgreSQL 13 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/13/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 0
+
+[pgdg10]
+name=PostgreSQL 10 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg96]
+name=PostgreSQL 9.6 for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG RHEL/CentOS Updates Testing common repositories.
+
+[pgdg-common-testing]
+name=PostgreSQL common testing RPMs for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/common/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG RHEL/CentOS Updates Testing repositories. (These packages should not be used in production)
+# Available for 11 and above.
+
+[pgdg15-updates-testing]
+name=PostgreSQL 15 for RHEL/CentOS $releasever - $basearch - Updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/15/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg14-updates-testing]
+name=PostgreSQL 14 for RHEL/CentOS $releasever - $basearch - Updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/14/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg13-updates-testing]
+name=PostgreSQL 13 for RHEL/CentOS $releasever - $basearch - Updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/13/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12-updates-testing]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11-updates-testing]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch - Updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/11/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG Red Hat Enterprise Linux / CentOS SRPM testing common repository
+
+[pgdg-source-common]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Source
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/common/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG RHEL / CentOS testing common SRPM repository for all PostgreSQL versions
+
+[pgdg-common-srpm-testing]
+name=PostgreSQL common testing SRPMs for RHEL/CentOS $releasever - $basearch
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/testing/common/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# PGDG Source RPMs (SRPM), and their testing repositories:
+
+[pgdg14-source-updates-testing]
+name=PostgreSQL 14 for RHEL/CentOS $releasever - $basearch - Source updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/testing/14/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg13-source-updates-testing]
+name=PostgreSQL 13 for RHEL/CentOS $releasever - $basearch - Source updates testing
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/testing/13/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12-source]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Source
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12-source-updates-testing]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Source update testing
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/testing/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11-source]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch - Source
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/11/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11-source-updates-testing]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch - Source update testing
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/testing/11/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg10-source]
+name=PostgreSQL 10 for RHEL/CentOS $releasever - $basearch - Source
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/10/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg96-source]
+name=PostgreSQL 9.6 for RHEL/CentOS $releasever - $basearch - Source
+baseurl=https://download.postgresql.org/pub/repos/yum/srpms/9.6/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# Debuginfo/debugsource packages for stable repos
+
+[pgdg14-debuginfo]
+name=PostgreSQL 14 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/14/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg13-debuginfo]
+name=PostgreSQL 13 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/13/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12-debuginfo]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11-debuginfo]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/11/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg10-debuginfo]
+name=PostgreSQL 10 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/10/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg96-debuginfo]
+name=PostgreSQL 9.6 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/debug/9.6/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+# Debuginfo/debugsource packages for testing repos
+# Available for 11 and above.
+
+[pgdg14-updates-testing-debuginfo]
+name=PostgreSQL 14 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/debug/14/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg13-updates-testing-debuginfo]
+name=PostgreSQL 13 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/debug/13/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg12-updates-testing-debuginfo]
+name=PostgreSQL 12 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/debug/12/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+
+[pgdg11-updates-testing-debuginfo]
+name=PostgreSQL 11 for RHEL/CentOS $releasever - $basearch - Debuginfo
+baseurl=https://download.postgresql.org/pub/repos/yum/testing/debug/11/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
+repo_gpgcheck = 1
+

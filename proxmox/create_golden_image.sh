@@ -5,12 +5,12 @@ while [ -n "$1" ]
 do
     case "$1" in
         -i|--image)
-        IMAGE=$2
+        IMAGE_NAME=$2
         shift;;
     esac
      case "$1" in
         -u|--uid)
-        UID=$2
+        GOLDEN_VM_NUMBER=$2
         shift;;
     esac   
     shift
@@ -19,12 +19,9 @@ done
 # From https://pve.proxmox.com/wiki/Cloud-Init_Support
 # GOLDEN_VM_NUMBER=9000
 # IMAGE_NAME=bionic-server-cloudimg-amd64.img
-GOLDEN_VM_NUMBER=${UID}
-IMAGE_NAME=${IMAGE}
-
 
 # download the image
-wget https://cloud-images.ubuntu.com/bionic/current/${IMAGE_NAME}
+# wget https://cloud-images.ubuntu.com/bionic/current/${IMAGE_NAME}
 
 # create a new VM
 qm create ${GOLDEN_VM_NUMBER} --memory 2048 --net0 virtio,bridge=vmbr0

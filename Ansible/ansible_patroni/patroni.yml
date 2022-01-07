@@ -1,0 +1,34 @@
+---
+- hosts: all
+  tasks:
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: '{{ inventory_hostname_short }}'
+- hosts: all
+  tasks:
+    - name: Replace a localhost entry with our own
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }} {{ hostvars[item]['inventory_hostname_short'] }}"
+      loop: "{{ groups['patroni-db'] }}"
+
+# - hosts: patroni-db
+#   become: true
+#   tasks:
+#     - name: Gather facts from all hosts implicetely
+#       setup:
+#       with_items:
+#         - "{{ groups['patroni-db'] }}"
+  # run_once: true
+  # environment:
+  #   http_proxy: http://localhost:443
+  #   https_proxy: http://localhost:443
+
+- hosts: patroni-db
+  become: true
+  roles:
+    - patroni_install
+  # environment:
+  #   http_proxy: http://localhost:443
+  #   https_proxy: http://localhost:443
+

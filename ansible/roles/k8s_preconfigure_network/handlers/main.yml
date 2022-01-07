@@ -1,3 +1,0 @@
----
-- name: Reread variables from sysctl
-  command: sudo sysctl -p

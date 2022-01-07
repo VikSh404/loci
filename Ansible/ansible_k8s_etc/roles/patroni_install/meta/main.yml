@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  role_name: k8s_install
+  author: VikSh404
+  description: Install patroni cluster.
+  license: "MIT"
+  min_ansible_version: 2.11
+  platforms:
+    - name: ol8
+      versions:
+        - 18
+  galaxy_tags:
+    - pnipg

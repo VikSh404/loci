@@ -1,9 +1,0 @@
-- hosts: "{{ hosts }}"
-  become: true
-  vars:
-    user_name: 'ansible'
-    user_groups: 'sudo'
-    use_sudo: true
-    public_key: 'ansible.pub'
-  roles:
-    - linux_os_useradd

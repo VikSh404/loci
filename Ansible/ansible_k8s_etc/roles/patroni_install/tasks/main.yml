@@ -1,0 +1,573 @@
+---
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ item }}"
+  loop:
+    - https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG-11
+    - https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+
+- name: Install repo PG
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    - yum-utils
+
+
+
+##### Yes, yes, yes.. I'm lazy.
+- name: Disable DNF module and RH's feachers, because.
+  ansible.builtin.shell:
+    cmd: "{{ item }}"
+  loop:
+    - sudo dnf module disable postgresql -y
+    - sudo sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config
+    - sudo setenforce 0
+    - sudo firewall-cmd --reload
+    - sudo firewall-cmd --add-port={2379,2380}/tcp --permanent
+##### Ok. I'm very lazy.
+
+
+
+
+- name: Install PG and Py modules
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - postgresql11
+    - postgresql11-contrib
+    - gcc
+    - python3-devel
+
+- name: Extract from url to files
+  unarchive:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
+      - --wildcards
+      - '*/etcd*'
+  loop:
+    - { src: 'https://github.com/etcd-io/etcd/releases/download/v3.5.0/etcd-v3.5.0-linux-amd64.tar.gz', dst: '/usr/local/bin/' }
+
+- name: Replace a localhost entry with our own
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item]['IP'] }} {{ hostvars[item]['HOSTNAME'] }}"
+  loop: "{{ groups['patroni-db'] }}"
+  notify: Restart etcd
+
+- name: Create directorys
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /etc/etcd
+    - /var/lib/etcd
+    - /etc/patroni/
+  notify: Restart etcd
+  tags:
+    - last
+- name: Copy etcd.service file from jinja2-template
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - { src: 'etcd.service.j2', dst: '/etc/systemd/system/etcd.service' }
+    - { src: 'etcd.env.j2', dst: '/etc/etcd/etcd.env' }
+  notify: Restart etcd
+
+- name: Install python modules for a patroni
+  pip:
+    name: "{{ item }}"
+    executable: pip3
+    extra_args: --upgrade
+  loop:
+    - pip
+    - psycopg2-binary
+    - patroni[etcd]
+
+
+- name: Copy patroni files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - { src: 'patroni.service.j2', dst: '/etc/systemd/system/patroni.service' }
+    - { src: 'patroni.yaml.j2', dst: '/etc/patroni/patroni.yaml' }
+  notify: Restart patroni
+  tags:
+    - last
+    
+# ---
+# - name: Install nginx
+#   apt:
+#     pkg: "{{ item }}"
+#     update_cache: yes
+#   loop:
+#     - socat
+#     - conntrack
+#     - ipset
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Create a directory for an etcd and an k8s  if it does not exist
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     mode: '0755'
+#   loop:
+#     - /etc/etcd
+#     - /var/lib/etcd
+#     - /var/lib/kubernetes
+#     - /etc/kubernetes/config
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Replace a localhost entry with our own
+#   lineinfile:
+#     path: /etc/hosts
+#     line: "{{ hostvars[item]['IP'] }} {{ hostvars[item]['HOSTNAME'] }}"
+#   loop: "{{ groups['k8sthw'] }}"
+
+# - name: Copy etcd bins
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/usr/local/bin/{{ item.split('/')[-1]  }}"
+#     mode: 0755
+#     owner: root
+#     group: root
+#   with_fileglob:         
+#     - 'etcd-v3.5.0-linux-amd64/etcd*'
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy open keys on controllers
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/etc/etcd/{{ item }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - ca.pem
+#     - kubernetes.pem
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy keys on controllers
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/etc/etcd/{{ item.split('/')[-1]  }}"
+#     mode: 0600
+#     owner: root
+#     group: root
+#   with_fileglob:
+#     - kubernetes-key.pem
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy keys on controllers
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/etc/etcd/{{ item.split('/')[-1]  }}"
+#     mode: 0600
+#     owner: root
+#     group: root
+#   with_fileglob:
+#     - kubernetes-key.pem
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy etcd.service file from jinja2-template
+#   template:
+#     src: etcd.service.j2
+#     dest: /etc/systemd/system/etcd.service
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: Restart etcd
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Download kube*
+#   get_url:
+#     url: '{{ item }}'
+#     dest:  "/usr/local/bin/{{ item.split('/')[-1]  }}"
+#     mode: '0755'
+#   loop:
+#     - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-apiserver" 
+#     - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-controller-manager"
+#     - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler" 
+#     - "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
+#   when: "'k8sthw-controllers' in group_names"
+
+# #
+# # kube-apiserver
+# #
+
+# - name: Copy keys on controllers in var/lib/k8s
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/var/lib/kubernetes/{{ item.split('/')[-1]  }}"
+#     mode: 0600
+#     owner: root
+#     group: root
+#   loop:
+#     - kubernetes-key.pem
+#     - ca-key.pem
+#     - service-account-key.pem
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy files on controllers in var/lib/k8s
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/var/lib/kubernetes/{{ item  }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - kubernetes.pem
+#     - ca.pem
+#     - service-account.pem
+#     - encryption-config.yaml
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy kube-apiserver.service file from jinja2-template
+#   template:
+#     src: kube-apiserver.service.j2
+#     dest: /etc/systemd/system/kube-apiserver.service
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart kube-scheduler
+#     - Restart kube-controller-manager
+#     - Restart kube-apiserver
+#   when: "'k8sthw-controllers' in group_names"
+
+# #
+# # kube controller manager
+# #
+
+# - name: Copy files on controllers in var/lib/k8s
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/var/lib/kubernetes/{{ item }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - kube-controller-manager.kubeconfig
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy kube-controller-manager.service file from jinja2-template
+#   template:
+#     src: kube-controller-manager.service.j2
+#     dest: /etc/systemd/system/kube-controller-manager.service
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart kube-scheduler
+#     - Restart kube-controller-manager
+#     - Restart kube-apiserver
+#   when: "'k8sthw-controllers' in group_names"
+
+# #
+# # kube-scheduler.kubeconfig
+# #
+
+# - name: Copy files on controllers in var/lib/k8s
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/var/lib/kubernetes/{{ item }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - kube-scheduler.kubeconfig
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy scheduler.yaml file from jinja2-template
+#   template:
+#     src: kube-scheduler.yaml.j2
+#     dest: /etc/kubernetes/config/kube-scheduler.yaml
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart kube-scheduler
+#     - Restart kube-controller-manager
+#     - Restart kube-apiserver
+#   when: "'k8sthw-controllers' in group_names"
+
+# - name: Copy kube-scheduler.service file from jinja2-template
+#   template:
+#     src: kube-scheduler.service.j2
+#     dest: /etc/systemd/system/kube-scheduler.service
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart kube-scheduler
+#     - Restart kube-controller-manager
+#     - Restart kube-apiserver
+#   when: "'k8sthw-controllers' in group_names"
+
+# #
+# # Nginx (thw) don't need for working in this installatin 
+# # + Proxy nginx
+# #
+
+# - name: Install nginx
+#   apt:
+#     pkg: "nginx"
+#     update_cache: yes
+#   when: "'k8sthw-controllers' in group_names or 'k8sthw-proxy' in group_names"
+
+# - name: Remove file (delete file)
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: absent
+#   loop:
+#     - /etc/nginx/sites-enabled/default
+#     - /etc/nginx/conf.d/default.conf
+#     - /etc/nginx/conf.d/proxy.conf
+#   notify: Restart nginx
+#   when: "'k8sthw-controllers' in group_names or 'k8sthw-proxy' in group_names"
+
+# - name: Copy kubernetes.default.svc.cluster.local on controllers
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/etc/nginx/sites-available/kubernetes.default.svc.cluster.local"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - "nginx/kubernetes.default.svc.cluster.local"
+#   when: "'k8sthw-controllers' in group_names"
+  
+# - name: Create a symbolic link kubernetes.default.svc.cluster.local
+#   file: 
+#     src: /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
+#     dest: /etc/nginx/sites-enabled/kubernetes.default.svc.cluster.local
+#     owner: root
+#     group: root
+#     state: link
+#   notify: Restart nginx
+#   when: "'k8sthw-controllers' in group_names"
+
+# #
+# # Roles 
+# #
+
+# - name: Copy admin.kubeconfig on controllers
+#   copy:
+#     src: "{{ item }}"
+#     dest: "/home/ansible/{{ item }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - admin.kubeconfig
+#   when: "'k8sthw-controllers' in group_names"
+
+# # - name: Copy Roles on controllers
+# #   copy:
+# #     src: "{{ item }}"
+# #     dest: "/home/ansible/{{ item.split('/')[-1] }}"
+# #     mode: 0644
+# #     owner: root
+# #     group: root
+# #   notify: 
+# #     - Apply roles
+# #   loop:
+# #     - k8s-roles/ClusterRole.yml
+# #     - k8s-roles/ClusterRoleBinding.yml
+# #   when: "'k8sthw-controllers' in group_names"
+# #   run_once: true
+
+# # - name: Apply roles
+# #   shell: |
+# #     kubectl apply --kubeconfig admin.kubeconfig -f /home/ansible/ClusterRole.yml
+# #     kubectl apply --kubeconfig admin.kubeconfig -f /home/ansible/ClusterRoleBinding.yml
+
+# #
+# # Proxy 
+# #
+
+# - name: Create a directory for upstream
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     mode: '0755'
+#   loop:
+#     - /etc/nginx/tcpconf.d
+#   when: "'k8sthw-proxy' in group_names"
+
+# - name: Copy proxy-config file from jinja2-template
+#   template:
+#     src: proxy/nginx.conf.j2
+#     dest: /etc/nginx/nginx.conf
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart nginx
+#   when: "'k8sthw-proxy' in group_names"
+
+
+# - name: Copy proxy-config file from jinja2-template
+#   template:
+#     src: proxy/proxy.conf.j2
+#     dest: /etc/nginx/tcpconf.d/proxy.conf
+#     mode: 0644
+#     owner: root
+#     group: root
+#   notify: 
+#     - Restart nginx
+#   when: "'k8sthw-proxy' in group_names"
+
+# #
+# # workers
+# #
+
+# - name: Create a directory for workers
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     #mode: '0755'
+#   loop:
+#     - /etc/cni/net.d 
+#     - /opt/cni/bin 
+#     - /var/lib/kubelet 
+#     - /var/lib/kube-proxy 
+#     - /var/lib/kubernetes 
+#     - /var/run/kubernetes
+#     - /etc/containerd
+#     - /var/lib/kube-proxy
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Install nginx
+#   apt:
+#     pkg: "{{ item }}"
+#     update_cache: yes
+#   loop:
+#     - socat
+#     - conntrack
+#     - ipset
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Download bins for worker nodes
+#   get_url:
+#     url: '{{ item }}'
+#     dest:  "/usr/local/bin/{{ item.split('/')[-1].split('.')[0] }}"
+#     mode: '0755'
+#   loop:
+#     - https://storage.googleapis.com/kubernetes-the-hard-way/runsc 
+#     - https://github.com/opencontainers/runc/releases/download/v1.0.0-rc93/runc.amd64 
+#     - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl 
+#     - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-proxy 
+#     - https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubelet
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Extract from url to files
+#   unarchive:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dst }}"
+#     remote_src: yes
+#   loop:
+#     - { src: 'https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.21.0/crictl-v1.21.0-linux-amd64.tar.gz', dst: '/usr/local/bin/' }
+#     - { src: 'https://github.com/containernetworking/plugins/releases/download/v0.9.1/cni-plugins-linux-amd64-v0.9.1.tgz', dst: '/opt/cni/bin/' }
+#     - { src: 'https://github.com/containerd/containerd/releases/download/v1.4.4/containerd-1.4.4-linux-amd64.tar.gz', dst: '/' }
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Copy a containerd config
+#   copy:
+#     src: "{{ item.file }}"
+#     dest: "{{ item.path }}"
+#     mode: 0644
+#     owner: root
+#     group: root
+#   loop:
+#     - { file: 'containerd/containerd.service', path: '/etc/systemd/system/containerd.service' }
+#     - { file: 'containerd/config.toml', path: '/etc/containerd/config.toml' }
+#   notify: 
+#     - Restart containerd
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Copy files on worker nodes
+#   copy:
+#     src: "{{ item.file }}"
+#     dest: "{{ item.path }}"
+#     mode: "{{ item.mode }}"
+#     owner: root
+#     group: root
+#   loop:
+#     - { file: '{{ HOSTNAME }}.pem', mode: 0644, path: '/var/lib/kubelet'}
+#     - { file: '{{ HOSTNAME }}-key.pem', mode: 600, path: '/var/lib/kubelet' }
+#     - { file: '{{ HOSTNAME }}.kubeconfig', mode: 644, path: '/var/lib/kubelet/kubeconfig' }
+#     - { file: 'ca.pem', mode: 644, path: '/var/lib/kubernetes/' }
+#     - { file: 'kube-proxy.kubeconfig', mode: 644, path: '/var/lib/kube-proxy/kubeconfig' }
+#     - { file: 'workers/kube-proxy-config.yaml', mode: 644, path: '/var/lib/kube-proxy/kube-proxy-config.yaml' }
+#     - { file: 'workers/kube-proxy.service', mode: 644, path: '/etc/systemd/system/kube-proxy.service' }
+#   notify: 
+#     - Restart containerd
+#     - Restart kubelet
+#     - Restart kube-proxy
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: Copy kubelet-config file from jinja2-template
+#   template:
+#     src: "{{ item.file }}"
+#     dest: "{{ item.path }}"
+#     mode: "{{ item.mode }}"
+#     owner: root
+#     group: root
+#   loop:
+#     - { file: 'workers/kubelet-config.yaml.j2', mode: 0644, path: '/var/lib/kubelet/kubelet-config.yaml'}
+#     - { file: 'workers/kubelet.service.j2', mode: 0644, path: '/etc/systemd/system/kubelet.service'}
+#   notify: 
+#     - Restart containerd
+#     - Restart kubelet
+#     - Restart kube-proxy
+#   when: "'k8sthw-workers' in group_names"
+
+# - name: net.ipv4.conf.all.forwarding
+#   sysctl:
+#     name: 'net.ipv4.conf.all.forwarding'
+#     value: '1'
+#     sysctl_file: /etc/sysctl.conf
+#     reload: yes
+
+# # - name: Install python3-pip package
+# #   apt:
+# #     pkg: "python3-pip"
+# #     update_cache: yes
+
+# # - name: Install openshift python package
+# #   pip:
+# #     name: openshift
+
+# - name: Create a Deployment Roles and dns
+#   community.kubernetes.k8s:
+#     state: present
+#     src: "{{ item }}"
+#   loop:
+#     - roles/k8sthw/kube-flannel.yml
+#     - roles/k8sthw/k8s-roles/ClusterRole.yml
+#     - roles/k8sthw/k8s-roles/ClusterRoleBinding.yml
+#     - roles/k8sthw/coredns-1.8.yaml
+#   when: "'k8sthw-controllers' in group_names"
+#   run_once: true
+#   become: no
+#   delegate_to: localhost
+#   tags:
+#     - k8s

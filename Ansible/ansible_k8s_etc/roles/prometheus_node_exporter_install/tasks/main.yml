@@ -1,0 +1,34 @@
+---
+- name: Add the user 'node_exporter'
+  user:
+    name: node_exporter
+    shell: /bin/false
+    create_home: no
+
+- name: Copy prometheus bin-file
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+    owner: node_exporter
+    group: node_exporter
+  loop:
+    - node_exporter
+  notify: node_exporter restart
+
+# - name: Unarchive a file that needs to be downloaded (added in 2.0)
+#   ansible.builtin.unarchive:
+#     src: https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.darwin-amd64.tar.gz
+#     dest: /usr/local/bin/
+#     remote_src: yes
+
+- name: Copy node_exporter.service file from jinja2-template
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    mode: 0644
+    owner: root
+    group: root
+  notify: node_exporter restart
+
+

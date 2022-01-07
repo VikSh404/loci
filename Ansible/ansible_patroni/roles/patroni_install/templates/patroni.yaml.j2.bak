@@ -1,0 +1,61 @@
+scope: cluster
+namespace: /cluster/
+name: postgres
+restapi:
+  listen: '{{ IP }}:8008'
+  connect_address: '{{ IP }}:8008'
+etcd3:
+  use_ssl: false
+  hosts: '{{ P_IP }}'
+ # host: 'http://127.0.0.1:2379'
+#  url: /
+bootstrap:
+  dcs:
+    ttl: 100
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_level: replica
+        hot_standby: 'on'
+        wal_keep_segments: 5120
+        max_wal_senders: 5
+        max_replication_slots: 5
+        checkpoint_timeoust: 30
+  initdb:
+    - encoding: UTF8
+    - data-checksums
+    - locale: en_EN.UTF-8
+  pg_hba:
+    - host all all 0.0.0.0/0 trust
+  users:
+    admin:
+      password: admin
+      options:
+        - createrole
+        - createdb
+postgresql:
+  listen: '{{ IP }}:5432'
+  connect_address: '{{ IP }}:5432'
+  bin_dir: /usr/pgsql-11/bin/
+  data_dir: /var/lib/pgsql/11/data  
+  authentication:
+    replication:
+      username: replication
+      password: mtspassword
+    superuser:
+      username: postgres
+      password: mtspassword
+  create_replica_methods:
+    basebackup:
+      checkpoint: fast
+  parameters:
+    unix_socket_directories: '/var/run/postgresql'
+tags:
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
+  nosync: false

@@ -1,0 +1,27 @@
+global
+    maxconn 1800
+
+defaults
+    log global
+    mode tcp
+    timeout client 15m
+    timeout connect 4s
+    timeout server 120m
+    timeout check 1s
+
+listen stats
+    mode http
+###REPLAVE WITH YOUR NUMBERS
+    bind {{ vrrp_address }}:7000
+    stats enable
+    stats uri /
+
+listen postgres
+###REPLACE IWTH YOUR NUMBERS
+    bind {{ vrrp_address }}:5432
+    option httpchk
+    http-check expect status 200
+    default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
+{% for host in groups['patroni-database'] %}
+    server postgresql{{ hostvars[host]['id'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:5432 maxconn 1800 check port 8008
+{% endfor %}

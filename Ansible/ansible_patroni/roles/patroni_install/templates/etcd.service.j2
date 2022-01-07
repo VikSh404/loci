@@ -1,0 +1,21 @@
+[Unit]
+Description=etcd
+After=network.target
+Wants=network-online.target
+#Wants=docker.socket
+#After=docker.service
+
+[Service]
+User=root
+#PermissionsStartOnly=true
+WorkingDirectory=/var/lib/etcd/
+EnvironmentFile=/etc/etcd/etcd.env
+ExecStart=/usr/local/bin/etcd
+#ExecStartPre=-/usr/bin/docker rm -f etcd1
+#ExecStop=/usr/bin/docker stop etcd1
+Restart=always
+RestartSec=15s
+TimeoutStartSec=30s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+---
+- name: Allow net bridge forwarding
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: net.bridge.bridge-nf-call-iptables=1
+  notify: Reread variables from sysctl
+

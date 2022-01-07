@@ -1,0 +1,48 @@
+! Configuration File for keepalived
+
+global_defs {
+   router_id {{ ansible_fqdn }}
+}
+
+vrrp_script check_haproxy_process {
+    script "{{ keepalived_config_dir }}/{{ keepalived_check_script_file }}"
+    interval 2
+    weight 2
+    fall 3
+    rise 1
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+{% if vrrp_master | bool %}
+    priority 100
+{% else %}
+    priority 99
+{% endif %}
+    nopreempt
+    interface {{ ifname }}
+    virtual_router_id {{ virtual_router_id }}
+    advert_int 1
+    smtp_alert
+    authentication {
+        auth_type PASS
+        auth_pass {{ vrrp_password }}
+    }
+    unicast_src_ip {{ ansible_default_ipv4.address }}
+    unicast_peer {
+{% for host in groups['keepalived']%}
+{% if host != inventory_hostname %}
+        {{ hostvars[host]['ansible_default_ipv4']['address'] }}
+{% endif %}
+{% endfor %}
+    }
+    virtual_ipaddress {
+       {{ vrrp_address }} dev {{ ifname }} label vrrp-1
+    }
+    track_script {
+        check_haproxy_process
+    }
+
+    notify {{ keepalived_config_dir }}/{{ keepalived_notify_script_file }}
+
+}

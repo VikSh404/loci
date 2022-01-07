@@ -1,0 +1,6 @@
+---
+ID: 1
+IP: '192.168.88.54'
+HOSTNAME: 'patroni-{{ ID }}'
+ETCD_NAME: "{{ HOSTNAME }}"
+INTERNAL_IP: "{{ IP }}"

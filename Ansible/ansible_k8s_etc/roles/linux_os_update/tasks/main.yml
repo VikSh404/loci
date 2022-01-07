@@ -1,0 +1,15 @@
+---
+- name: include tasks only if files exist.
+  include_tasks:
+    file: "{{ params['files'][0] }}"   
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}.yml"
+
+# - name: Update OS
+#   include: "{{ item }}"
+#   with_first_found:
+#     - files:
+#       - "{{ ansible_distribution }}.yml"
+#       skip: true

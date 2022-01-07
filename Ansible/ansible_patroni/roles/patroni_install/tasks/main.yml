@@ -1,0 +1,234 @@
+---
+- debug:
+    var: ansible_fqdn
+- debug:
+    var: id
+
+
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+##### Yes, yes, yes.. I'm lazy.
+# - name: Disable DNF module and RH's feachers, because.
+#   shell:
+#     cmd: "{{ item }}"
+#   loop:
+#     - dnf module disable postgresql -y
+#       #- sudo firewall-cmd --reload
+#       #- sudo firewall-cmd --add-port={2379,2380}/tcp --permanent
+# ##### Ok. I'm very lazy.
+#   ignore_errors: yes
+
+- name: Install epel
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: true
+  loop:
+    - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+    - dnf-plugins-core
+  register: dnf_install
+  when: 
+    - "'patroni-database' in group_names" 
+
+- name: Fucking DNF's settings
+  shell:
+    cmd: "{{ item }}"
+  loop:
+    - sudo dnf config-manager --set-enabled powertools
+    - sudo dnf -qy module disable postgresql
+  when: 
+    - "'patroni-database' in group_names" 
+    - dnf_install.changed
+
+
+- name: Install the latest version of Apache from the testing repo
+  dnf:
+    name: httpd
+    enable_plugin: testing
+    state: present
+
+
+- name: Copy postgres repofile
+  copy:
+    src=pgdg-redhat-all.repo
+    dest=/etc/yum.repos.d/pgdg-redhat-all-1.repo
+    owner=root
+    group=root
+    mode=0644
+
+- name: Install postgres packages from rpms
+  yum:
+    name: "{{ item }}"
+    state: present
+    # disable_gpg_check: true
+  loop:
+    - postgresql11
+    - postgresql11-server
+    - postgresql11-contrib
+  when: "'patroni-database' in group_names"
+
+- name: Install postgis
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: true
+  loop:
+    - postgis31_11
+  when: "'patroni-database' in group_names"
+  
+
+# - name: stop firewalld if needed
+#   ansible.builtin.service:
+#     name: firewalld
+#     state: stopped
+#     enabled: no
+
+- name: Install Py modules
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - gcc
+    - python3-devel
+  when: "'patroni-database' in group_names"
+
+
+- name: Create directorys
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /etc/etcd
+    - /var/lib/etcd
+    - /etc/patroni/
+  notify: Restart etcd
+
+
+###
+### ETCD SECTION
+###
+- name: Copy etcd tar.gz
+  copy:
+    src=etcd-v3.5.0-linux-amd64.tar.gz
+    dest=/tmp/etcd-v3.5.0-linux-amd64.tar.gz
+    owner=root
+    group=root
+    mode=0644
+
+- name: Extract from url to files
+  unarchive:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
+      - --wildcards
+      - '*/etcd*'
+  loop:
+    - { src: '/tmp/etcd-v3.5.0-linux-amd64.tar.gz', dst: '/usr/local/bin/' }
+  notify:
+    - Restart etcd
+  when: "'patroni-etcd' in group_names"
+  tags:
+    - etcd
+    
+- name: Replace a localhost entry with our own
+  blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE MANAGED BLOCK hosts"
+    block: |
+      {{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}
+#  lineinfile:
+#    path: "/etc/hosts"
+#    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}"
+  loop: "{{ groups['patroni-etcd'] }}"
+  when: "'patroni-etcd' in group_names"
+  notify: Restart etcd
+  tags:
+    - etcd
+
+- name: Put etcd.service file
+  template:
+    src: "etcd.service.j2"
+    dest: "/etc/systemd/system/etcd.service"
+    mode: 0644
+    owner: root
+    group: root
+  when: "'patroni-etcd' in group_names"
+  notify: Restart etcd
+  tags:
+    - etcd
+
+- name: Put etcd.env file
+  template:
+    src: "etcd.env.j2"
+    dest: "/etc/etcd/etcd.env"
+    mode: 0644
+    owner: root
+    group: root
+  when: "'patroni-etcd' in group_names"
+  notify: Restart etcd
+  tags:
+    - etcd
+
+
+###
+### PATRONI SECTION
+###
+- name: Install python modules for a patroni
+  pip:
+    name: "{{ item }}"
+    executable: pip3
+    extra_args: --upgrade
+  loop:
+    - pip
+    - psycopg2-binary
+    - patroni[etcd3]
+  when: "'patroni-database' in group_names"
+
+- name: Copy patroni files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - { src: 'patroni.service.j2', dst: '/etc/systemd/system/patroni.service' }
+    - { src: 'patroni.yaml.j2', dst: '/etc/patroni/patroni.yaml' }
+  notify: Restart patroni
+  when: "'patroni-database' in group_names"
+   
+ 
+###
+### HAPROXY BLOCK
+###
+- name: Install haproxy package
+  yum:
+    pkg: "{{ item }}"
+    update_cache: yes
+  loop:
+    - haproxy
+  when: "'patroni-haproxy' in group_names"
+  notify: Restart haproxy
+  tags:
+    - haproxy
+
+- name: Copy haproxy config file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - { src: 'haproxy.cfg.j2', dst: '/etc/haproxy/haproxy.cfg' }
+  notify: Restart haproxy
+  when: "'patroni-haproxy' in group_names"
+  tags:
+    - haproxy

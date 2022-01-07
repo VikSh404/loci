@@ -1,0 +1,16 @@
+---
+- hosts: patroni-db
+  become: true
+  tasks:
+    - name: Gather facts from all hosts implicetely
+      setup:
+      with_items:
+        - "{{ groups['patroni-db'] }}"
+
+- hosts: keepalived
+  become: true
+  roles:
+    - keepalived
+  # environment:
+  #   http_proxy: http://localhost:443
+  #   https_proxy: http://localhost:443

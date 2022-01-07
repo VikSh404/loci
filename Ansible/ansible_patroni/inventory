@@ -1,0 +1,49 @@
+[all:vars]
+vrrp_address=10.0.0.20
+ansible_user=ansible
+ansible_password=ansible
+
+### If we use proxy
+# ansible_ssh_extra_args="-R443:localhost:443"
+HTTP_PROXY='' # HTTP_PROXY=http://127.0.0.1:443
+HTTPS_PROXY={{ HTTP_PROXY }}
+https_proxy={{ HTTP_PROXY }}
+http_proxy={{ HTTP_PROXY }}
+
+######################
+HA1=haproxy-01.internal
+HA2=haproxy-02.internal
+PG1=db-01.internal
+PG2=db-02.internal
+BARMAN1=barman-01.internal
+
+[patroni-etcd]
+haproxy-01.internal ansible_host=10.0.0.103
+haproxy-02.internal ansible_host=10.0.0.104
+db-01.internal      ansible_host=10.0.0.101
+
+[patroni-db:children]
+patroni-database
+patroni-haproxy
+
+[patroni-database]
+db-01.internal   ansible_host=10.0.0.101 id=1
+db-02.internal   ansible_host=10.0.0.102 id=2
+
+[patroni-haproxy]
+haproxy-01.internal   ansible_host=10.0.0.103
+haproxy-02.internal   ansible_host=10.0.0.104
+
+[keepalived:vars]
+ifname=eth0
+virtual_router_id=121
+vrrp_password=password
+
+keepalived_config_dir="/etc/keepalived"
+keepalived_config_file="keepalived.conf.j2"
+keepalived_notify_script_file="notify.sh"
+keepalived_check_script_file="check.sh"
+
+[keepalived]
+haproxy-01.internal   ansible_host=10.0.0.103 vrrp_master=false
+haproxy-02.internal   ansible_host=10.0.0.104 vrrp_master=false

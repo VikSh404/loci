@@ -1,0 +1,25 @@
+---
+- name: Restart etcd
+  throttle: 1
+  systemd:
+    name: etcd
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Restart patroni
+  throttle: 1
+  systemd:
+    name: patroni
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Restart haproxy
+  throttle: 1
+  systemd:
+    name: haproxy
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+

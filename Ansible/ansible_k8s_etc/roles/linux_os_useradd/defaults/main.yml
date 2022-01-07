@@ -1,0 +1,3 @@
+user_shell: '/bin/bash'
+user_home: '/home/{{ user_name }}'
+use_sudo: false

@@ -1,7 +1,0 @@
----
-- name: node_exporter restart
-  systemd:
-    name: node_exporter
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
