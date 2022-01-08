@@ -4,10 +4,11 @@
 - debug:
     var: id
 
-
 - name: Disable SELinux
   selinux:
     state: disabled
+  tags:
+    - patroni
 
 ##### Yes, yes, yes.. I'm lazy.
 # - name: Disable DNF module and RH's feachers, because.
@@ -31,7 +32,9 @@
     - dnf-plugins-core
   register: dnf_install
   when: 
-    - "'patroni-database' in group_names" 
+    - "'patroni-database' in group_names"
+  tags:
+    - patroni
 
 - name: Fucking DNF's settings
   shell:
@@ -42,14 +45,16 @@
   when: 
     - "'patroni-database' in group_names" 
     - dnf_install.changed
-
+  tags:
+    - configure
 
 - name: Install the latest version of Apache from the testing repo
   dnf:
     name: httpd
     enable_plugin: testing
     state: present
-
+  tags:
+    - configure
 
 - name: Copy postgres repofile
   copy:
@@ -58,6 +63,8 @@
     owner=root
     group=root
     mode=0644
+  tags:
+    - configure
 
 - name: Install postgres packages from rpms
   yum:
@@ -69,6 +76,8 @@
     - postgresql11-server
     - postgresql11-contrib
   when: "'patroni-database' in group_names"
+  tags:
+    - patroni
 
 - name: Install postgis
   yum:
@@ -78,7 +87,8 @@
   loop:
     - postgis31_11
   when: "'patroni-database' in group_names"
-  
+  tags:
+    - patroni
 
 # - name: stop firewalld if needed
 #   ansible.builtin.service:
@@ -95,6 +105,8 @@
     - gcc
     - python3-devel
   when: "'patroni-database' in group_names"
+  tags:
+    - patroni
 
 
 - name: Create directorys
@@ -107,6 +119,9 @@
     - /var/lib/etcd
     - /etc/patroni/
   notify: Restart etcd
+  tags:
+    - etcd
+    - configure
 
 
 ###
@@ -119,6 +134,9 @@
     owner=root
     group=root
     mode=0644
+  tags:
+    - etcd
+    - configure
 
 - name: Extract from url to files
   unarchive:
@@ -136,21 +154,24 @@
   when: "'patroni-etcd' in group_names"
   tags:
     - etcd
-    
-- name: Replace a localhost entry with our own
-  blockinfile:
-    path: /etc/hosts
-    marker: "# {mark} ANSIBLE MANAGED BLOCK hosts"
-    block: |
-      {{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}
+    - configure
+
+# - name: Replace a localhost entry with our own
+#   blockinfile:
+#     path: /etc/hosts
+#     marker: "# {mark} ANSIBLE MANAGED BLOCK hosts"
+#     block: |
+#       {{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}
 #  lineinfile:
 #    path: "/etc/hosts"
 #    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}"
+
   loop: "{{ groups['patroni-etcd'] }}"
   when: "'patroni-etcd' in group_names"
   notify: Restart etcd
   tags:
     - etcd
+    - configure
 
 - name: Put etcd.service file
   template:
@@ -163,6 +184,7 @@
   notify: Restart etcd
   tags:
     - etcd
+    - configure
 
 - name: Put etcd.env file
   template:
@@ -175,11 +197,8 @@
   notify: Restart etcd
   tags:
     - etcd
+    - configure
 
-
-###
-### PATRONI SECTION
-###
 - name: Install python modules for a patroni
   pip:
     name: "{{ item }}"
@@ -190,6 +209,8 @@
     - psycopg2-binary
     - patroni[etcd3]
   when: "'patroni-database' in group_names"
+  tags:
+    - patroni
 
 - name: Copy patroni files
   template:
@@ -203,11 +224,7 @@
     - { src: 'patroni.yaml.j2', dst: '/etc/patroni/patroni.yaml' }
   notify: Restart patroni
   when: "'patroni-database' in group_names"
-   
- 
-###
-### HAPROXY BLOCK
-###
+
 - name: Install haproxy package
   yum:
     pkg: "{{ item }}"
@@ -215,7 +232,6 @@
   loop:
     - haproxy
   when: "'patroni-haproxy' in group_names"
-  notify: Restart haproxy
   tags:
     - haproxy
 
@@ -228,7 +244,64 @@
     group: root
   loop:
     - { src: 'haproxy.cfg.j2', dst: '/etc/haproxy/haproxy.cfg' }
-  notify: Restart haproxy
   when: "'patroni-haproxy' in group_names"
   tags:
     - haproxy
+    - configure
+
+- name: Copy keepalived notify script
+  copy:
+    src: "epel.repo"
+    dest: "/etc/yum.repos.d/"
+  tags:
+    - keepalived
+    - configure
+  when: "'keepalived' in group_names"
+
+- name: Install the latest version of semanage module
+  yum:
+    name: 
+    - keepalived
+    - vim
+    state: present 
+  tags:
+    - keepalived
+  when: "'keepalived' in group_names"
+
+- name: Create {{ keepalived_config_dir }} dir
+  file:
+    path: "{{ keepalived_config_dir }}"
+    state: directory
+    mode: '0755'
+  tags:
+    - keepalived
+    - configure
+  when: "'keepalived' in group_names"
+
+- name: Copy the keepalived configuration file
+  template:
+    src:  "{{ keepalived_config_file }}"
+    dest: "{{ keepalived_config_dir }}/keepalived.conf"
+  notify: 
+    - Restart keepalived
+  tags:
+    - keepalived
+    - configure
+  when: "'keepalived' in group_names"
+
+- name: Copy keepalived notify script
+  copy:
+    src: "{{ item }}"
+    dest: "{{ keepalived_config_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0744
+  loop:
+    - "{{ keepalived_notify_script_file }}"
+    - "{{ keepalived_check_script_file }}"
+  notify:
+    - Restart keepalived
+  tags:
+    - keepalived
+    - configure
+  when: "'keepalived' in group_names"

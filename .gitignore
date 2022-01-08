@@ -1,7 +1,8 @@
 # logs
 *.log
 *.logs
-
+.cache
+*.cache
 # Ansible's meta
 ansible/*.retry
 

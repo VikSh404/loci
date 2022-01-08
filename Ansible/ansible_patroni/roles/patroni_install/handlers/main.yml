@@ -6,6 +6,7 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+  when: "'patroni-etcd' in group_names"
 
 - name: Restart patroni
   throttle: 1
@@ -14,12 +15,11 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+  when: "'patroni-database' in group_names"
 
-- name: Restart haproxy
-  throttle: 1
+- name: Restart keepalived
   systemd:
-    name: haproxy
+    name: keepalived
     state: restarted
     enabled: yes
-    daemon_reload: yes
-
+  when: "'keepalived' in group_names"
