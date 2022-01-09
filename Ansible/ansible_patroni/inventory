@@ -20,24 +20,33 @@ https_proxy={{ HTTP_PROXY }}
 http_proxy={{ HTTP_PROXY }}
 
 ######################
+barman_db=db-01
 
-[patroni-etcd]
+[patroni_etcd]
 haproxy-01.internal ansible_host=10.0.0.103
 haproxy-02.internal ansible_host=10.0.0.104
 db-01.internal      ansible_host=10.0.0.101
 
-[patroni-db:children]
-patroni-database
-patroni-haproxy
+[patroni_db:children]
+patroni_database
+patroni_haproxy
+barman
 
-[patroni-database]
-db-01.internal   ansible_host=10.0.0.101 id=1
-db-02.internal   ansible_host=10.0.0.102 id=2
+[patroni_database]
+db-01.internal   ansible_host=10.0.0.101 id=1 app_home_dir=/var/lib/pgsql/
+db-02.internal   ansible_host=10.0.0.102 id=2 app_home_dir=/var/lib/pgsql/
 
-[patroni-haproxy]
+[patroni_haproxy]
 haproxy-01.internal   ansible_host=10.0.0.103
 haproxy-02.internal   ansible_host=10.0.0.104
 
 [keepalived]
 haproxy-01.internal   ansible_host=10.0.0.103 vrrp_master=false
 haproxy-02.internal   ansible_host=10.0.0.104 vrrp_master=false
+
+[barman]
+barman-01.internal   ansible_host=10.0.0.105 app_home_dir=/var/lib/barman/
+
+[backup:children]
+barman
+patroni_database

@@ -22,6 +22,6 @@ listen postgres
     option httpchk
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
-{% for host in groups['patroni-database'] %}
+{% for host in groups['patroni_database'] %}
     server postgresql{{ hostvars[host]['id'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:5432 maxconn 1800 check port 8008
 {% endfor %}

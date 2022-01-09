@@ -1,11 +1,11 @@
 ---
-- hosts: patroni-db
+- hosts: patroni_db
   become: true
   tasks:
     - name: Gather facts from all hosts implicetely
       setup:
       with_items:
-        - "{{ groups['patroni-db'] }}"
+        - "{{ groups['patroni_db'] }}"
 
 - hosts: keepalived
   become: true

@@ -1,0 +1,22 @@
+[barman]
+barman_home = /var/lib/barman
+barman_user = barman
+log_file = /backup/barman/barman.log
+compression = gzip
+reuse_backup = link
+backup_method = rsync
+archiver = on
+immediate_checkpoint = true
+basebackup_retry_times = 3
+basebackup_retry_sleep = 30
+last_backup_maximum_age = 1 DAYS
+
+[{{ barman_db }}]
+description = "{{ barman_db }}"
+ssh_command = ssh postgres@{{ barman_db }}
+conninfo = host={{ barman_db }} user=postgres port=5432
+retention_policy_mode = auto
+retention_policy = RECOVERY WINDOW OF 7 days
+wal_retention_policy = main
+backup_options = exclusive_backup
+

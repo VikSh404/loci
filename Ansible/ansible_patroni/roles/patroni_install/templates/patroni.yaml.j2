@@ -6,7 +6,7 @@ restapi:
   connect_address: {{ ansible_default_ipv4.address }}:8008
 etcd3:
   use_ssl: false
-  hosts: '{{ hostvars[groups['patroni-etcd'][0]]['ansible_default_ipv4']['address'] }}:2379,{{ hostvars[groups['patroni-etcd'][1]]['ansible_default_ipv4']['address'] }}:2379,{{ hostvars[groups['patroni-etcd'][2]]['ansible_default_ipv4']['address'] }}:2379'
+  hosts: '{{ hostvars[groups['patroni_etcd'][0]]['ansible_default_ipv4']['address'] }}:2379,{{ hostvars[groups['patroni_etcd'][1]]['ansible_default_ipv4']['address'] }}:2379,{{ hostvars[groups['patroni_etcd'][2]]['ansible_default_ipv4']['address'] }}:2379'
   #host: '127.0.0.1:2379'
 bootstrap:
   dcs:
@@ -31,11 +31,12 @@ bootstrap:
     - data-checksums
 #    - locale: en_EN.UTF-8
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
-{% for host in groups['patroni-database'] %}
+{% for host in groups['patroni_database'] %}
   - host replication replication {{ hostvars[host]['ansible_default_ipv4']['address'] }}/32 md5
 {% endfor %}
-  #- host all all 0.0.0.0/0 md5
   - host all all 0.0.0.0/0 trust
+  - host repmgr all 0.0.0.0/0 trust
+  - host replication all 0.0.0.0/0 trust
   users:
     admin:
       password: admin
@@ -61,6 +62,8 @@ postgresql:
       checkpoint: fast
   parameters:
     unix_socket_directories: '/var/run/postgresql'
+    archive_mode: on
+    archive_command: 'rsync -e "ssh -o StrictHostKeyChecking=no" -a %p barman@{{ hostvars[groups['barman'][0]]['inventory_hostname'] }}:/var/lib/barman/{{ inventory_hostname_short }}/incoming/%f'
 tags:
   nofailover: false
   noloadbalance: false

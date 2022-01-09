@@ -31,6 +31,8 @@ bootstrap:
     - locale: en_EN.UTF-8
   pg_hba:
     - host all all 0.0.0.0/0 trust
+    - host repmgr all 0.0.0.0/0 trust
+    - host replication all 0.0.0.0/0 trust
   users:
     admin:
       password: admin

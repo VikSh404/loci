@@ -1,307 +1,437 @@
 ---
-- debug:
-    var: ansible_fqdn
-- debug:
-    var: id
+- name: Preparation OS
+  block:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+      tags:
+        - patroni
 
-- name: Disable SELinux
-  selinux:
-    state: disabled
-  tags:
-    - patroni
+      #
+      # #### Yes, yes, yes.. I'm lazy.
+      # - name: Disable DNF module and RH's feachers, because.
+      #   shell:
+      #     cmd: "{{ item }}"
+      #   loop:
+      #     - dnf module disable postgresql -y
+      #       #- sudo firewall-cmd --reload
+      #       #- sudo firewall-cmd --add-port={2379,2380}/tcp --permanent
+      # ##### Ok. I'm very lazy.
+      #   ignore_errors: yes
+      #
+  tags: stage_1
+- name: Install Packages
+  block:
+    - name: Install some packages
+      yum:
+        name: "{{ item }}"
+        state: present
+        disable_gpg_check: true
+      loop:
+        - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        - dnf-plugins-core
+        - vim
+        - tmux
+      register: dnf_disable_module
+      when: 
+        - "'patroni_database' in group_names"
+      tags:
+        - patroni
 
-##### Yes, yes, yes.. I'm lazy.
-# - name: Disable DNF module and RH's feachers, because.
-#   shell:
-#     cmd: "{{ item }}"
-#   loop:
-#     - dnf module disable postgresql -y
-#       #- sudo firewall-cmd --reload
-#       #- sudo firewall-cmd --add-port={2379,2380}/tcp --permanent
-# ##### Ok. I'm very lazy.
-#   ignore_errors: yes
+    - name: Fucking DNF's settings
+      shell:
+        cmd: "{{ item }}"
+      loop:
+        - sudo dnf config-manager --set-enabled powertools
+        - sudo dnf -qy module disable postgresql
+      when: 
+        - "'patroni_database' in group_names" 
+        - dnf_disable_module.changed
+      tags:
+        - configure
 
-- name: Install epel
-  yum:
-    name: "{{ item }}"
-    state: present
-    disable_gpg_check: true
-  loop:
-    - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-    - dnf-plugins-core
-  register: dnf_install
-  when: 
-    - "'patroni-database' in group_names"
-  tags:
-    - patroni
+    # - name: stop firewalld if needed
+    #   ansible.builtin.service:
+    #     name: firewalld
+    #     state: stopped
+    #     enabled: no
 
-- name: Fucking DNF's settings
-  shell:
-    cmd: "{{ item }}"
-  loop:
-    - sudo dnf config-manager --set-enabled powertools
-    - sudo dnf -qy module disable postgresql
-  when: 
-    - "'patroni-database' in group_names" 
-    - dnf_install.changed
-  tags:
-    - configure
-
-- name: Install the latest version of Apache from the testing repo
-  dnf:
-    name: httpd
-    enable_plugin: testing
-    state: present
-  tags:
-    - configure
-
-- name: Copy postgres repofile
-  copy:
-    src=pgdg-redhat-all.repo
-    dest=/etc/yum.repos.d/pgdg-redhat-all-1.repo
-    owner=root
-    group=root
-    mode=0644
-  tags:
-    - configure
-
-- name: Install postgres packages from rpms
-  yum:
-    name: "{{ item }}"
-    state: present
-    # disable_gpg_check: true
-  loop:
-    - postgresql11
-    - postgresql11-server
-    - postgresql11-contrib
-  when: "'patroni-database' in group_names"
-  tags:
-    - patroni
-
-- name: Install postgis
-  yum:
-    name: "{{ item }}"
-    state: present
-    disable_gpg_check: true
-  loop:
-    - postgis31_11
-  when: "'patroni-database' in group_names"
-  tags:
-    - patroni
-
-# - name: stop firewalld if needed
-#   ansible.builtin.service:
-#     name: firewalld
-#     state: stopped
-#     enabled: no
-
-- name: Install Py modules
-  yum:
-    name: "{{ item }}"
-    state: present
-    update_cache: yes
-  loop:
-    - gcc
-    - python3-devel
-  when: "'patroni-database' in group_names"
-  tags:
-    - patroni
+    # - name: Install the latest version of Apache from the testing repo
+    #   dnf:
+    #     name: httpd
+    #     enable_plugin: testing
+    #     state: present
+    #   tags:
+    #     - configure
+  tags: stage_2
+- name: Install  Postgres
+  block:
+    - name: Copy postgres repofile
+      copy:
+        src=pgdg-redhat-all.repo
+        dest=/etc/yum.repos.d/pgdg-redhat-all-1.repo
+        owner=root
+        group=root
+        mode=0644
+      tags:
+        - configure
 
 
-- name: Create directorys
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-  loop:
-    - /etc/etcd
-    - /var/lib/etcd
-    - /etc/patroni/
-  notify: Restart etcd
-  tags:
-    - etcd
-    - configure
+    - name: Install postgres packages from rpms
+      yum:
+        name: "{{ item }}"
+        state: present
+        # disable_gpg_check: true
+      loop:
+        - postgresql11
+        - postgresql11-server
+        - postgresql11-contrib
+      when: "'patroni_database' in group_names"
+      tags:
+        - patroni
+
+    - name: Install postgis
+      yum:
+        name: "{{ item }}"
+        state: present
+        disable_gpg_check: true
+      loop:
+        - postgis31_11
+      when: "'patroni_database' in group_names"
+      tags:
+        - patroni
+  tags: stage_3
+- name: Install the required files for Patroni + dirs
+  block:
+    - name: Install Py modules
+      yum:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - gcc
+        - python3-devel
+      when: "'patroni_database' in group_names"
+      tags:
+        - patroni
 
 
-###
-### ETCD SECTION
-###
-- name: Copy etcd tar.gz
-  copy:
-    src=etcd-v3.5.0-linux-amd64.tar.gz
-    dest=/tmp/etcd-v3.5.0-linux-amd64.tar.gz
-    owner=root
-    group=root
-    mode=0644
-  tags:
-    - etcd
-    - configure
+    - name: Create directorys
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /etc/etcd
+        - /var/lib/etcd
+        - /etc/patroni/
+      notify: Restart etcd
+      tags:
+        - etcd
+        - configure
+  tags: stage_4
 
-- name: Extract from url to files
-  unarchive:
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
-    remote_src: yes
-    extra_opts:
-      - --strip-components=1
-      - --wildcards
-      - '*/etcd*'
-  loop:
-    - { src: '/tmp/etcd-v3.5.0-linux-amd64.tar.gz', dst: '/usr/local/bin/' }
-  notify:
-    - Restart etcd
-  when: "'patroni-etcd' in group_names"
-  tags:
-    - etcd
-    - configure
+- name: Install ETCD
+  block:
+    - name: Copy etcd tar.gz
+      copy:
+        src=etcd-v3.5.0-linux-amd64.tar.gz
+        dest=/tmp/etcd-v3.5.0-linux-amd64.tar.gz
+        owner=root
+        group=root
+        mode=0644
+      tags:
+        - etcd
+        - configure
 
-# - name: Replace a localhost entry with our own
-#   blockinfile:
-#     path: /etc/hosts
-#     marker: "# {mark} ANSIBLE MANAGED BLOCK hosts"
-#     block: |
-#       {{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}
-#  lineinfile:
-#    path: "/etc/hosts"
-#    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}"
+    - name: Extract from url to files
+      unarchive:
+        src: "{{ item.src }}"
+        dest: "{{ item.dst }}"
+        remote_src: yes
+        extra_opts:
+          - --strip-components=1
+          - --wildcards
+          - '*/etcd*'
+      loop:
+        - { src: '/tmp/etcd-v3.5.0-linux-amd64.tar.gz', dst: '/usr/local/bin/' }
+      notify:
+        - Restart etcd
+      when: "'patroni_etcd' in group_names"
+      tags:
+        - etcd
+        - configure
 
-  loop: "{{ groups['patroni-etcd'] }}"
-  when: "'patroni-etcd' in group_names"
-  notify: Restart etcd
-  tags:
-    - etcd
-    - configure
+    - name: Put etcd.service file
+      template:
+        src: "etcd.service.j2"
+        dest: "/etc/systemd/system/etcd.service"
+        mode: 0644
+        owner: root
+        group: root
+      when: "'patroni_etcd' in group_names"
+      notify: Restart etcd
+      tags:
+        - etcd
+        - configure
 
-- name: Put etcd.service file
-  template:
-    src: "etcd.service.j2"
-    dest: "/etc/systemd/system/etcd.service"
-    mode: 0644
-    owner: root
-    group: root
-  when: "'patroni-etcd' in group_names"
-  notify: Restart etcd
-  tags:
-    - etcd
-    - configure
+    - name: Put etcd.env file
+      template:
+        src: "etcd.env.j2"
+        dest: "/etc/etcd/etcd.env"
+        mode: 0644
+        owner: root
+        group: root
+      when: "'patroni_etcd' in group_names"
+      notify: Restart etcd
+      tags:
+        - etcd
+        - configure
+  tags: stage_5
 
-- name: Put etcd.env file
-  template:
-    src: "etcd.env.j2"
-    dest: "/etc/etcd/etcd.env"
-    mode: 0644
-    owner: root
-    group: root
-  when: "'patroni-etcd' in group_names"
-  notify: Restart etcd
-  tags:
-    - etcd
-    - configure
+- name: Install Patroni
+  block:
+    - name: Install python modules for a patroni
+      pip:
+        name: "{{ item }}"
+        executable: pip3
+        extra_args: --upgrade
+      loop:
+        - pip
+        - psycopg2-binary
+        - patroni[etcd3]
+      when: "'patroni_database' in group_names"
+      tags:
+        - patroni
 
-- name: Install python modules for a patroni
-  pip:
-    name: "{{ item }}"
-    executable: pip3
-    extra_args: --upgrade
-  loop:
-    - pip
-    - psycopg2-binary
-    - patroni[etcd3]
-  when: "'patroni-database' in group_names"
-  tags:
-    - patroni
+    - name: Copy patroni files
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dst }}"
+        mode: 0644
+        owner: root
+        group: root
+      loop:
+        - { src: 'patroni.service.j2', dst: '/etc/systemd/system/patroni.service' }
+        - { src: 'patroni.yaml.j2', dst: '/etc/patroni/patroni.yaml' }
+      notify: Restart patroni
+      when: "'patroni_database' in group_names"
+      tags:
+        - test
+  tags: stage_6
 
-- name: Copy patroni files
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
-    mode: 0644
-    owner: root
-    group: root
-  loop:
-    - { src: 'patroni.service.j2', dst: '/etc/systemd/system/patroni.service' }
-    - { src: 'patroni.yaml.j2', dst: '/etc/patroni/patroni.yaml' }
-  notify: Restart patroni
-  when: "'patroni-database' in group_names"
+- name: Install Haproxy
+  block:
+    - name: Install haproxy package
+      yum:
+        pkg: "{{ item }}"
+        update_cache: yes
+      loop:
+        - haproxy
+      when: "'patroni_haproxy' in group_names"
+      tags:
+        - haproxy
 
-- name: Install haproxy package
-  yum:
-    pkg: "{{ item }}"
-    update_cache: yes
-  loop:
-    - haproxy
-  when: "'patroni-haproxy' in group_names"
-  tags:
-    - haproxy
+    - name: Copy haproxy config file
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dst }}"
+        mode: 0644
+        owner: root
+        group: root
+      loop:
+        - { src: 'haproxy.cfg.j2', dst: '/etc/haproxy/haproxy.cfg' }
+      when: "'patroni_haproxy' in group_names"
+      tags:
+        - haproxy
+        - configure
+  tags: stage_7
 
-- name: Copy haproxy config file
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
-    mode: 0644
-    owner: root
-    group: root
-  loop:
-    - { src: 'haproxy.cfg.j2', dst: '/etc/haproxy/haproxy.cfg' }
-  when: "'patroni-haproxy' in group_names"
-  tags:
-    - haproxy
-    - configure
+- name: Install keepalived
+  block:
+    - name: Copy keepalived notify script
+      copy:
+        src: "epel.repo"
+        dest: "/etc/yum.repos.d/"
+      tags:
+        - keepalived
+        - configure
+      when: "'keepalived' in group_names"
 
-- name: Copy keepalived notify script
-  copy:
-    src: "epel.repo"
-    dest: "/etc/yum.repos.d/"
-  tags:
-    - keepalived
-    - configure
-  when: "'keepalived' in group_names"
+    - name: Install the latest version of semanage module
+      yum:
+        name: 
+        - keepalived
+        - vim
+        state: present 
+      tags:
+        - keepalived
+      when: "'keepalived' in group_names"
 
-- name: Install the latest version of semanage module
-  yum:
-    name: 
-    - keepalived
-    - vim
-    state: present 
-  tags:
-    - keepalived
-  when: "'keepalived' in group_names"
+    - name: Create {{ keepalived_config_dir }} dir
+      file:
+        path: "{{ keepalived_config_dir }}"
+        state: directory
+        mode: '0755'
+      tags:
+        - keepalived
+        - configure
+      when: "'keepalived' in group_names"
 
-- name: Create {{ keepalived_config_dir }} dir
-  file:
-    path: "{{ keepalived_config_dir }}"
-    state: directory
-    mode: '0755'
-  tags:
-    - keepalived
-    - configure
-  when: "'keepalived' in group_names"
+    - name: Copy the keepalived configuration file
+      template:
+        src:  "{{ keepalived_config_file }}"
+        dest: "{{ keepalived_config_dir }}/keepalived.conf"
+      notify: 
+        - Restart keepalived
+      tags:
+        - keepalived
+        - configure
+      when: "'keepalived' in group_names"
 
-- name: Copy the keepalived configuration file
-  template:
-    src:  "{{ keepalived_config_file }}"
-    dest: "{{ keepalived_config_dir }}/keepalived.conf"
-  notify: 
-    - Restart keepalived
-  tags:
-    - keepalived
-    - configure
-  when: "'keepalived' in group_names"
+    - name: Copy keepalived notify script
+      copy:
+        src: "{{ item }}"
+        dest: "{{ keepalived_config_dir }}/{{ item }}"
+        owner: root
+        group: root
+        mode: 0744
+      loop:
+        - "{{ keepalived_notify_script_file }}"
+        - "{{ keepalived_check_script_file }}"
+      notify:
+        - Restart keepalived
+      tags:
+        - keepalived
+        - configure
+      when: "'keepalived' in group_names"
+  tags: stage_8
 
-- name: Copy keepalived notify script
-  copy:
-    src: "{{ item }}"
-    dest: "{{ keepalived_config_dir }}/{{ item }}"
-    owner: root
-    group: root
-    mode: 0744
-  loop:
-    - "{{ keepalived_notify_script_file }}"
-    - "{{ keepalived_check_script_file }}"
-  notify:
-    - Restart keepalived
-  tags:
-    - keepalived
-    - configure
-  when: "'keepalived' in group_names"
+- name: Install Barman
+  block:
+    - name: Barman install epel
+      yum:
+        name: "{{ item }}"
+        state: present
+        disable_gpg_check: true
+      loop:
+        - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        - dnf-plugins-core
+      register: barman_dnf_install
+      tags:
+        - barman
+      when: "'barman' in group_names"
+
+    - name: Fucking DNF's settings
+      shell:
+        cmd: "{{ item }}"
+      loop:
+        - sudo dnf config-manager --set-enabled powertools
+        - sudo dnf -qy module disable postgresql
+      when: 
+        - "'barman' in group_names" 
+        - barman_dnf_install.changed
+      tags:
+        - barman
+        - configure
+
+    - name: Barman install
+      yum:
+        name: 
+        - barman
+        state: present 
+      tags:
+        - barman
+      when: "'barman' in group_names"
+
+    - name: Put etcd.service file
+      template:
+        src: "barman.conf.j2"
+        dest: "/etc/barman.conf"
+        mode: 0644
+        owner: root
+        group: root
+      when: "'barman' in group_names"
+      tags:
+        - barman
+
+    - name: generate SSH key barman
+      user:
+        name: barman
+        generate_ssh_key: yes
+      tags:
+        - barman
+      when: "'barman' in group_names"
+
+    - name: generate SSH key postgres
+      user:
+        name: postgres
+        generate_ssh_key: yes
+      tags:
+        - barman
+      when: "'patroni_database' in group_names"
+
+    - name: Get keys from postgresql and barmen
+      slurp:
+        src: "{{ app_home_dir }}.ssh/id_rsa.pub"
+      register: user_ssh_key
+      tags:
+        - test
+        - barman
+      when: "'patroni_database' in group_names or 'barman' in group_names"
+
+    - name: Register var
+      set_fact:
+        user_ssh_key_decoded: "{{ user_ssh_key.content | b64decode }}"
+      tags:
+        - barman
+      when: "'patroni_database' in group_names or 'barman' in group_names"
+
+    - name: show key
+      debug:
+        msg: "{{ user_ssh_key_decoded }}"
+      tags:
+        - test
+        - barman
+      when: 
+        - "'patroni_database' in group_names or 'barman' in group_names"
+
+    - name: Put keys
+      lineinfile:
+        create: true
+        path: "{{ app_home_dir }}.ssh/authorized_keys"
+        line: "{{ hostvars[item].user_ssh_key_decoded }}"
+        search_string: "{{ hostvars[item].user_ssh_key_decoded }}"
+      loop: "{{ groups['backup'] }}"
+      when: 
+        - "'patroni_database' in group_names or 'barman' in group_names"
+      tags:
+        - test
+        - barman
+
+    - name: Create .ssh/authorized_keys
+      file:
+        path: "{{ app_home_dir }}.ssh/authorized_keys"
+        state: file
+        mode: '0644'
+        owner: postgres
+        group: postgres
+      when: 
+        - "'patroni_database' in group_names"
+      tags:
+        - barman
+
+    - name: Create .ssh/authorized_keys
+      file:
+        path: "{{ app_home_dir }}.ssh/authorized_keys"
+        state: file
+        mode: '0644'
+        owner: barman
+        group: barman
+      when: 
+        - "'barman' in group_names"
+      tags:
+        - barman
+  tags: stage_9
