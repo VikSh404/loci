@@ -3,7 +3,7 @@
 
 And, what about this project? This project is, firstly, for me (and for everyone who wants to try to use this method for remembering). I work as DevOps Engineer, and this profession required me to remember a lot of different types of information and tools.
 
-Before I started this project, I have tried to write my Nodepad++ with 2000+ pages, multi-man (the manual), Anki, etc. All of them weren't effective.
+Before I started this project, I had tried to write my Nodepad++ with 2000+ pages, multi-man (the manual), Anki, etc. All of them weren't effective.
 
 Now I want to create a **big multi-side project** where I use all instruments I usually use in my work.
 
